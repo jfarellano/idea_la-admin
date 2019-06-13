@@ -2,7 +2,10 @@
 <section>
     <Header></Header>
     <div class="main-container container-fluid">
-        <h1>Test text</h1>
+        <h1>Admin</h1>
+        <router-link tag="b-button" class="button" to="/users">
+            <font-awesome-icon icon="users" /> Usuarios
+        </router-link>
     </div>
 </section>
 </template>

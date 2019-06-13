@@ -3,6 +3,7 @@ import Router from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
 import Login from './components/Login.vue'
 import Dashboard from './components/Dashboard.vue'
+import Users from './components/Users'
 
 Vue.use(Router)
 export default new Router ({
@@ -16,6 +17,11 @@ export default new Router ({
             path: '/dashboard',
             name: 'Dashboard',
             component: Dashboard
+        },
+        {
+            path: '/users',
+            name: 'Users',
+            component: Users
         }
     ]
 })

@@ -1,6 +1,6 @@
 <template>
   <b-navbar toggleable="sm" type="dark" fixed="top">
-    <b-navbar-brand href="/">
+    <b-navbar-brand href="/#/dashboard">
       <img src="../assets/CamaraBaq-24.svg" alt="Ciudá">
     </b-navbar-brand>
     <button
