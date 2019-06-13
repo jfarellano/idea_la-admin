@@ -44,16 +44,10 @@ export default {
       localStorage.setItem('admin', admin)
     },
     set_name: function (name, lastname) {
-      const nameCapitalized =
-        name.charAt(0).toUpperCase() +
-        name.slice(1);
-      const lastnameCapitalized =
-        lastname.charAt(0).toUpperCase() +
-        lastname.slice(1);
-      localStorage.setItem('name', nameCapitalized + " " + lastnameCapitalized)
+      localStorage.setItem('name', api.utils.upcase(name + ' ' + lastname))
     },
-    loged: function () {
-      if (localStorage.getItem('secret') != null) {
+    logged: function () {
+      if (localStorage.getItem('secret') != null && localStorage.getItem('admin')) {
         var exp = new Date(localStorage.getItem('expire'))
         if (exp > Date.now()){
           return true

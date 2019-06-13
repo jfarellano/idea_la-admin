@@ -91,9 +91,9 @@ export default {
     }
   },
   created() {
-    var loged = auth.storage.loged()
-    if(loged){
-      this.tokenExists = loged
+    var logged = auth.storage.logged()
+    if(logged){
+      this.tokenExists = logged
       this.fullname = auth.storage.get("name");
     }else{
       auth.storage.clear()
