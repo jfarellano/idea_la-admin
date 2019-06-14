@@ -21,15 +21,18 @@
             :src="getImage(user.picture)"
             alt="Circle image"
           ></b-img>
-          {{getName(user.name, user.lastname)}}
+          {{upCase(getName(user.name, user.lastname))}}
           <span class="extra">{{user.email}}</span>
+        </b-button>
+        <b-button class="block" @click="blockUser(user.id)">
+          <font-awesome-icon icon="user-slash"></font-awesome-icon>
         </b-button>
         <b-button class="option" @click="deleteUser(user.id)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
     </div>
-    <b-modal id="showUser" :title="getName(user.name, user.lastname)" hide-footer="true">
+    <b-modal id="showUser" :title="upCase(getName(user.name, user.lastname))" hide-footer>
       <div class="modal-container container-fluid">
         <b-img
           rounded="circle"
@@ -55,11 +58,11 @@
         </p>
         <p>
           <b>Genero:</b>
-          {{user.gender}}
+          {{getGender(user.gender)}}
         </p>
         <p v-if="user.location != null">
           <b>Localidad:</b>
-          {{user.location.hood}}
+          {{upCase(user.location.hood)}}
         </p>
       </div>
     </b-modal>
@@ -107,14 +110,17 @@ export default {
         this.getUsers();
       });
     },
+    blockUser (id) {
+      console.log('Usuario bloqueado')
+    },
     filter() {
       if (this.search != "" && this.search != null) {
         var here = this;
         return here.users.filter(function(user) {
           return (
-            here.getName(user.name, user.lastname).includes(here.search) ||
-            user.cc.includes(here.search) ||
-            user.email.includes(here.search)
+            here.getName(user.name, user.lastname).includes(here.search.toLowerCase()) ||
+            user.cc.includes(here.search.toLowerCase()) ||
+            user.email.includes(here.search.toLowerCase())
           );
         });
       } else {
@@ -124,6 +130,28 @@ export default {
     showUser(user) {
       this.user = user;
       this.$bvModal.show("showUser");
+    },
+    getGender(gender) {
+      switch (gender) {
+        case 'male':
+          return 'Masculino'
+          break;
+        case 'female':
+          return 'Femenino'
+          break;
+        case 'other':
+          return 'Otro'
+        case 'i_prefer_not_to_say':
+          return 'Prefiero no decir'
+          break;
+
+        default:
+          return ''
+          break;
+      }
+    },
+    upCase(str) {
+      return api.utils.upcase(str)
     }
   },
   created() {
@@ -165,6 +193,11 @@ export default {
       width: 50px;
       background-color: red;
       color: white;
+    }
+    .block {
+      width: 50px;
+      background-color: transparent;
+      color: #6a6a6a;
     }
     .avatar {
       width: 34px;

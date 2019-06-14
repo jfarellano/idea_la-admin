@@ -10,7 +10,7 @@
             data-aos-delay="10"
           >
             <router-link to="/">
-            <img src="../assets/CamaraBaq-Blue.svg" alt height="54px" class="iconImage">
+              <img src="../assets/CamaraBaq-Blue.svg" alt height="54px" class="iconImage">
             </router-link>
 
             <p class="iniciar-sesion">Iniciar Sesión admin</p>
@@ -28,9 +28,7 @@
                 @keydown.space.prevent
               >
             </div>
-            <p v-if="errors.has('email')" class="incorrectInput">
-              El correo ingresado no es válido.
-            </p>
+            <p v-if="errors.has('email')" class="incorrectInput">El correo ingresado no es válido.</p>
 
             <h3 class="input-title">Contraseña</h3>
             <div class="input-group">
@@ -43,10 +41,8 @@
                 name="password"
               >
             </div>
-            <p v-if="errors.has('password')" class="incorrectInput">
-              Este campo es obligatorio.
-            </p>
-            
+            <p v-if="errors.has('password')" class="incorrectInput">Este campo es obligatorio.</p>
+
             <button
               type="button"
               class="btn btn-primary btn-lg btn-block btnLoginStyle"
@@ -84,8 +80,12 @@ export default {
     //     console.log(err)
     //   })
     // },
-    validLogin(){
-      if (this.errors.count() == 0 && this.userCredentials.email != null && this.userCredentials.password != null) {
+    validLogin() {
+      if (
+        this.errors.count() == 0 &&
+        this.userCredentials.email != null &&
+        this.userCredentials.password != null
+      ) {
         return true;
       } else {
         return false;
@@ -98,72 +98,67 @@ export default {
           password: this.userCredentials.password
         })
         .then(response => {
-          if(response.data.is_admin){
+          if (response.data.is_admin) {
             auth.storage.set(
-              response.data.user_id,
+              response.data.user.id,
               response.data.secret,
               response.data.expire_at,
               response.data.is_admin
-            )
-            this.extraData(response.data.user_id)
-          }else{
+            );
+            if (response.data.user.picture != null)
+              auth.storage.setImage(response.data.user.picture.url);
+            else auth.storage.setImage("http://placehold.it/30x30");
+            auth.storage.set_name(
+              response.data.user.name,
+              response.data.user.lastname
+            );
+            this.$router.push("/dashboard");
+          } else {
             this.$snotify.error("Su usuario no es admin", "Atención", {
               timeout: 2000,
               showProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true
-            })
+            });
           }
         })
         .catch(err => {
-          console.log(err)
-          if (err.response.data.single_authentication == "invalid credentials") {
-            this.$snotify.error("Credenciales inválidas.", "Atención", {
+          if (err.response == null) {
+            this.$snotify.error("Error de red. Inténtelo mas tarde.", "Error", {
               timeout: 2000,
               showProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true
             });
-          } else if (err.response.data.single_authentication == "user is blocked") {
-            // ALERT NOTIFICATION USER BLOCKED
-            this.$snotify.error("Usuario bloqueado", "Atención", {
-              timeout: 2000,
-              showProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true
-            });
-            this.userCredentials.username = "";
-            this.userCredentials.password = "";
-          }
-        });
-    },
-
-    extraData(user_id) {
-      auth.session
-        .user_info(user_id)
-        .then(response => {
-          if (response.data.picture != null) auth.storage.setImage(response.data.picture.url)
-          else auth.storage.setImage("http://placehold.it/30x30")
-          auth.storage.set_name(response.data.name, response.data.lastname);
-          this.$router.push("dashboard");
-        })
-        .catch(err => {
-          this.$snotify.error(
-            "Error obteniendo informacion del usuario",
-            "Atención",
-            {
-              timeout: 2000,
-              showProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true
+          } else {
+            if (err.response.data.single_authentication == "invalid credentials") {
+              this.$snotify.error("Credenciales inválidas.", "Atención", {
+                timeout: 2000,
+                showProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true
+              });
+              this.userCredentials.password = ""
+            } else if (err.response.data.single_authentication == "user is blocked") {
+              // ALERT NOTIFICATION USER BLOCKED
+              this.$snotify.error("Usuario bloqueado", "Atención", {
+                timeout: 2000,
+                showProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true
+              });
+              this.userCredentials.username = "";
+              this.userCredentials.password = "";
+            } else {
+              this.$snotify.error("Error de red. Inténtelo mas tarde.", "Error", {
+                timeout: 2000,
+                showProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true
+              });
             }
-          );
-          this.auth.storage.clear()
+          }
         });
-    },
-
-    oauthSocial(provider){
-      console.log(provider);
     }
   }
 };
@@ -171,7 +166,7 @@ export default {
 
 <style scoped style lang="scss">
 .loginComponent {
-  background-color: #0E2469;
+  background-color: #0e2469;
   height: 100%;
   text-align: center;
   .rowStyle {
@@ -180,7 +175,7 @@ export default {
   }
   .iconImage {
     margin-bottom: 15px;
-    fill:#0E2469;
+    fill: #0e2469;
   }
   @media (max-width: 800px) {
     .fieldsContainer {
@@ -193,7 +188,6 @@ export default {
     .iniciar-sesion {
       font-size: 31px !important;
     }
-    
   }
   @media (max-width: 365px) {
     .iniciar-sesion {
@@ -216,8 +210,8 @@ export default {
     padding: 60px;
     width: 521px;
     border-radius: 6px;
-    background-color: #FFFFFF;
-    box-shadow: 0 0 14px 0 rgba(20,20,20,0.3);
+    background-color: #ffffff;
+    box-shadow: 0 0 14px 0 rgba(20, 20, 20, 0.3);
   }
   .divSeparator {
     height: 13px;
@@ -238,31 +232,31 @@ export default {
     height: 50px;
     // width: 100%;
     border-radius: 5px;
-    border-color: #0E2469;
-    background-color: #0E2469;
+    border-color: #0e2469;
+    background-color: #0e2469;
     margin-top: 17px;
     margin-bottom: 17px;
   }
   .inputStyles {
-    border: 1px solid #0E2469;
+    border: 1px solid #0e2469;
     border-radius: 5px;
     box-shadow: 0 0 2px 0 #ffffff;
     // width: 27.85%;
     height: 50px;
     font-size: 21px;
-    color: #0E2469;
+    color: #0e2469;
     &:focus {
-      border: 2px solid #0E2469;
+      border: 2px solid #0e2469;
     }
   }
-  
+
   .incorrectInput {
-    color: #ED1D24;
+    color: #ed1d24;
   }
   .iniciar-sesion {
     height: 44px;
     // width: 213px;
-    color: #0E2469;
+    color: #0e2469;
     font-size: 35px;
     font-weight: bold;
     line-height: 44px;
@@ -270,7 +264,7 @@ export default {
   .input-title {
     height: 27px;
     // width: 175px;
-    color: #6A6A6A;
+    color: #6a6a6a;
     font-size: 21px;
     font-weight: 300;
     line-height: 27px;
