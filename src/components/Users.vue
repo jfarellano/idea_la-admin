@@ -26,11 +26,12 @@
         </b-button>
         <!-- <b-button class="block" @click="blockUser(user.id)">
           <font-awesome-icon icon="user-slash"></font-awesome-icon>
-        </b-button> -->
+        </b-button>-->
         <b-button class="option" @click="deleteUser(user.id)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
+      <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
     <b-modal id="showUser" :title="upCase(getName(user.name, user.lastname))" hide-footer>
       <div class="modal-container container-fluid">
@@ -82,7 +83,9 @@ export default {
     return {
       users: [],
       search: "",
-      user: {}
+      user: {},
+      page: 1,
+      size: 5
     };
   },
   methods: {
@@ -105,6 +108,9 @@ export default {
         .catch(err => {
           console.log(err.response);
         });
+    },
+    pagination() {
+      return this.page * this.size < this.users.length;
     },
     deleteUser(id) {
       this.$snotify.confirm(
@@ -131,7 +137,7 @@ export default {
                 });
               }
             },
-            { text: "Cancelar"}
+            { text: "Cancelar" }
           ]
         }
       );
@@ -140,9 +146,10 @@ export default {
       console.log("Usuario bloqueado");
     },
     filter() {
+      var list = [];
       if (this.search != "" && this.search != null) {
         var here = this;
-        return here.users.filter(function(user) {
+        list = here.users.filter(function(user) {
           return (
             here
               .getName(user.name, user.lastname)
@@ -152,8 +159,12 @@ export default {
           );
         });
       } else {
-        return this.users;
+        list = this.users;
       }
+      return list.slice(0, this.page * this.size);
+    },
+    nextPage() {
+      this.page = this.page + 1;
     },
     showUser(user) {
       this.user = user;
@@ -236,6 +247,14 @@ export default {
       font-size: 12px;
     }
   }
+}
+.next {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #0e2469;
+  border-radius: 5px;
+  color: #0e2469;
+  margin: 10px 0px;
 }
 .modal-container {
   text-align: center;
