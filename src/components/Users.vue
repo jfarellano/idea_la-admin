@@ -24,9 +24,9 @@
           {{upCase(getName(user.name, user.lastname))}}
           <span class="extra">{{user.email}}</span>
         </b-button>
-        <b-button class="block" @click="blockUser(user.id)">
+        <!-- <b-button class="block" @click="blockUser(user.id)">
           <font-awesome-icon icon="user-slash"></font-awesome-icon>
-        </b-button>
+        </b-button> -->
         <b-button class="option" @click="deleteUser(user.id)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
