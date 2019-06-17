@@ -2,12 +2,15 @@
   <section>
     <Header></Header>
     <div class="fixed">
+      <!-- <router-link tag="b-button" class="button btnStyle" to="/challenges">
+        Inicio
+      </router-link> -->
       <h1>Usuarios</h1>
       <div class="input-group">
         <input
           type="text"
           class="form-control inputStyles"
-          placeholder="Busqueda: Nombre, E-mail, CC"
+          placeholder="Búsqueda: Nombre, correo, C.C."
           v-model="search"
         >
       </div>
@@ -27,7 +30,7 @@
         <!-- <b-button class="block" @click="blockUser(user.id)">
           <font-awesome-icon icon="user-slash"></font-awesome-icon>
         </b-button>-->
-        <b-button class="option" @click="deleteUser(user.id)">
+        <b-button class="option" @click="deleteUser(user)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
@@ -42,15 +45,15 @@
           alt="Circle image"
         ></b-img>
         <p>
-          <b>E-mail:</b>
+          <b>Correo:</b>
           {{user.email}}
         </p>
         <p>
-          <b>CC:</b>
+          <b>C.C.:</b>
           {{user.cc}}
         </p>
         <p>
-          <b>Telefono:</b>
+          <b>Télefono:</b>
           {{user.phone}}
         </p>
         <p>
@@ -58,7 +61,7 @@
           {{user.age}}
         </p>
         <p>
-          <b>Genero:</b>
+          <b>Género:</b>
           {{getGender(user.gender)}}
         </p>
         <p v-if="user.location != null">
@@ -85,7 +88,7 @@ export default {
       search: "",
       user: {},
       page: 1,
-      size: 5
+      size: 10
     };
   },
   methods: {
@@ -112,10 +115,10 @@ export default {
     pagination() {
       return this.page * this.size < this.users.length;
     },
-    deleteUser(id) {
+    deleteUser(user) {
       this.$snotify.confirm(
-        "Estas seguro que quieres eliminar a " +
-          this.upCase(this.getName(this.user.name, this.user.lastname)),
+        "¿Estas seguro que quieres eliminar a " +
+          this.upCase(this.getName(user.name, user.lastname)) + "?",
         "Eliminar usuario",
         {
           timeout: 2000,
@@ -126,7 +129,7 @@ export default {
             {
               text: "Borrar",
               action: () => {
-                api.user.delete(id).then(response => {
+                api.user.delete(user.id).then(response => {
                   this.getUsers();
                   this.$snotify.success("Usuario eliminado", "Exito", {
                     timeout: 2000,
@@ -230,7 +233,7 @@ export default {
     }
     .option {
       width: 50px;
-      background-color: red;
+      background-color: #ed1d24;
       color: white;
     }
     .block {

@@ -28,10 +28,16 @@ export default {
   challenges: {
     index: function () {
       return r.get(SERVER_URL + '/challenges')
-      },
+    },
     create: function (body) {
       return r.post(SERVER_URL + '/challenges', body ,getHeaders)
-    }
+    },
+    update: function (body) {
+      return r.put(SERVER_URL + '/challenges/' + challengeID, body ,getHeaders)
+    },
+    delete: function(challengeID) {
+      return r.del(SERVER_URL + '/challenges/' + challengeID)
+    },
   },
   ideas: {
     index: function(){

@@ -39,6 +39,7 @@
                 v-validate="'required'"
                 :class="{'has-error': errors.has('password_invalid')}"
                 name="password"
+                @keyup.enter="userLogin()"
               >
             </div>
             <p v-if="errors.has('password')" class="incorrectInput">Este campo es obligatorio.</p>
@@ -73,13 +74,6 @@ export default {
     };
   },
   methods: {
-    // authenticate: function (provider) {
-    //   this.$auth.authenticate(provider).then(response => {
-    //     console.log('response.data: ', response.data)
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
     validLogin() {
       if (
         this.errors.count() == 0 &&
