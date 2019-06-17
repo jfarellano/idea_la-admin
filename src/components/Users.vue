@@ -66,6 +66,7 @@
         </p>
       </div>
     </b-modal>
+    <vue-snotify></vue-snotify>
   </section>
 </template>
 
@@ -106,19 +107,46 @@ export default {
         });
     },
     deleteUser(id) {
-      api.user.delete(id).then(response => {
-        this.getUsers();
-      });
+      this.$snotify.confirm(
+        "Estas seguro que quieres eliminar a " +
+          this.upCase(this.getName(this.user.name, this.user.lastname)),
+        "Eliminar usuario",
+        {
+          timeout: 2000,
+          showProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          buttons: [
+            {
+              text: "Borrar",
+              action: () => {
+                api.user.delete(id).then(response => {
+                  this.getUsers();
+                  this.$snotify.success("Usuario eliminado", "Exito", {
+                    timeout: 2000,
+                    showProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                  });
+                });
+              }
+            },
+            { text: "Cancelar"}
+          ]
+        }
+      );
     },
-    blockUser (id) {
-      console.log('Usuario bloqueado')
+    blockUser(id) {
+      console.log("Usuario bloqueado");
     },
     filter() {
       if (this.search != "" && this.search != null) {
         var here = this;
         return here.users.filter(function(user) {
           return (
-            here.getName(user.name, user.lastname).includes(here.search.toLowerCase()) ||
+            here
+              .getName(user.name, user.lastname)
+              .includes(here.search.toLowerCase()) ||
             user.cc.includes(here.search.toLowerCase()) ||
             user.email.includes(here.search.toLowerCase())
           );
@@ -133,25 +161,25 @@ export default {
     },
     getGender(gender) {
       switch (gender) {
-        case 'male':
-          return 'Masculino'
+        case "male":
+          return "Masculino";
           break;
-        case 'female':
-          return 'Femenino'
+        case "female":
+          return "Femenino";
           break;
-        case 'other':
-          return 'Otro'
-        case 'i_prefer_not_to_say':
-          return 'Prefiero no decir'
+        case "other":
+          return "Otro";
+        case "i_prefer_not_to_say":
+          return "Prefiero no decir";
           break;
 
         default:
-          return ''
+          return "";
           break;
       }
     },
     upCase(str) {
-      return api.utils.upcase(str)
+      return api.utils.upcase(str);
     }
   },
   created() {
@@ -167,9 +195,9 @@ export default {
   background-color: white;
   width: 100vw !important;
   padding-bottom: 30px;
-	padding-top: 90px;
-	padding-left: 15px;
-	padding-right: 15px;
+  padding-top: 90px;
+  padding-left: 15px;
+  padding-right: 15px;
   .input-group {
     width: calc(100vw - 30px) !important;
   }
