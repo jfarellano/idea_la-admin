@@ -6,39 +6,41 @@
       <h1 v-else>Editar Reto</h1>
       <br>
       <b-row class="margins-content">
-        <b-col cols="4">
-          <h5>Imagen de perfil</h5>
+        <b-col cols="4" align="center">
+          <b-img class="challenge-picture" :src="getImage()"/>
           <b-button
-            @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
-            class="loadBtn"
-            v-if="challenge.picture == null"
-          >Carga tu imagen</b-button>
-          <b-button-group class="loadBtn" v-if="challenge.picture != null">
-            <b-button
-              class="text"
               @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
-            >Cambia tu imagen</b-button>
-            <b-button class="icon" @click="clearImage()">
-              <font-awesome-icon icon="times"></font-awesome-icon>
-            </b-button>
-          </b-button-group>
-          <b-form-file
-            v-model="challenge.picture"
-            accept="image/jpeg, image/png"
-            style="display:none;"
-            @change="checkSize()"
-            ref="fileInput"
-            v-validate="'size:2000'"
-            :class="{'has-error': errors.has('image_size')}"
-            name="image"
-          />
-          <p v-if="challenge.picture != null" class="selectedImage">{{challenge.picture.name}}</p>
-          <p
-            v-if="errors.has('image')"
-            class="incorrectInput"
-          >La imagen es muy grande, el maximo son 2MB</p>
+              class="loadBtn"
+              v-if="challenge.picture == null"
+            >Carga una imagen</b-button>
+            <b-button-group class="loadBtn" v-else>
+              <b-button
+                class="text"
+                @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
+              >Cambia tu imagen</b-button>
+            </b-button-group>
+            <b-form-file
+              v-model="challenge.picture"
+              accept="image/jpeg, image/png"
+              style="display:none;"
+              @change="checkSize()"
+              ref="fileInput"
+              v-validate="'size:2000'"
+              :class="{'has-error': errors.has('image_size')}"
+              name="image"
+            />
+            <p v-if="challenge.picture != null" class="selectedImage">{{challenge.picture.name}}</p>
+            <p
+              v-if="errors.has('image')"
+              class="incorrectInput"
+            >La imagen es muy grande, el maximo son 2MB</p>
         </b-col>
         <b-col cols="8">
+          <!-- PENDIENTE ROUTER LINK A IDEAS DEL RETO YA FILTRADAS -->
+          <!-- <router-link class="challenge" :to='"/add_edit_challenge/" + challenge.id'>{{challenge.ideas}} idea(s) publicada(s)</router-link> -->
+          <router-link v-if="challengeID != 'new'" class="challenge" to='/add_edit_challenge'>
+            {{challenge.ideas}} idea(s) publicada(s)
+          </router-link>
           <h5>Título</h5>
           <div class="input-group">
             <input
@@ -50,7 +52,6 @@
               name="name"
             >
           </div>
-          <br>
           <h5>Descripción breve</h5>
           <textarea cols="101" class="form-control" v-model="challenge.short_description">
           </textarea>
@@ -58,6 +59,7 @@
       </b-row>
       <b-row class="margins-content">
         <b-col>
+          <br>
           <h5>Descripción detallada</h5>
           <textarea cols="101" class="form-control longDescription" v-model="challenge.description">
           </textarea>
@@ -69,12 +71,17 @@
               type="button"
               class="btn btn-primary btn-lg btnStyle btnContinueStyle"
               v-on:click.prevent="acceptChallenge()"
-            >Aceptar</button>
+              :disabled='allValidInputs()'
+            >
+            <p v-if="challengeID == 'new'">Aceptar</p>
+            <p v-else>Guardar</p>
+            </button>
             <router-link
               to="/challenges" 
               tag="button" 
               class="btn btn-primary btn-lg btnStyle btnCancelStyle"
-            >Cancelar</router-link>  </b-col>
+            >Cancelar</router-link>
+          </b-col>
       </b-row>
     </div>
   </section>
@@ -97,16 +104,76 @@ export default {
   },
   created(){
     this.challengeID = this.$route.params.challengeID;
+    if (this.challengeID != 'new') {
+      api.challenge
+      .getInfo(this.challengeID)
+      .then((response) => {
+        this.challenge = response.data;
+      })
+      .catch((err) => {
+        console.log(err)
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
+    }
   },
   methods: {
+    allValidInputs(){
+      if (this.challenge.picture != null || this.challenge.title == '' || 
+      this.challenge.short_description == '' || this.challenge.description == '') {
+        return false;
+      } else {
+        return true;
+      }
+    },
     acceptChallenge(){
-      console.log('corre')
-    }
+      var newChallenge = new FormData();
+      newChallenge.append("title", this.challenge.title);
+      newChallenge.append("short_description", this.challenge.short_description);
+      newChallenge.append("description", this.challenge.description);
+      if (this.challenge.picture != null) challenge.append("image", this.challenge.picture);
+      
+      if (this.challengeID == 'new') {
+        api.challenges
+        .create(newChallenge)
+        .then(() => {
+          this.$router.push("/challenges");
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        })
+      } else {
+        api.challenges
+        .update(newChallenge)
+        .then(() => {
+          this.$router.push("/challenges");
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        })
+      }
+    },
+    getImage() {
+      if (this.challenge.picture == null) {
+        if (this.challenge.picture == null) return "http://placehold.it/100x100";
+        else return this.challenge.picture.url;
+      } else return URL.createObjectURL(this.challenge.picture);
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.selectedImage {
+  color: #6a6a6a;
+  font-size: 12px;
+  margin: 0px;
+}
+.challenge-picture {
+  max-height: 135px;
+  margin-bottom: 10px;
+}
 .btnStyle {
   height: 50px;
   border-radius: 5px;
@@ -140,10 +207,10 @@ export default {
   padding-top: 90px;
   padding-left: 15px;
   padding-right: 15px;
-    .margins-content {
-      padding-left: 70px;
-      padding-right: 70px;
-    }
+    // .margins-content {
+    //   padding-left: 70px;
+    //   padding-right: 70px;
+    // }
   // .input-group {
   //   width: calc(100vw - 30px) !important;
   // }
@@ -155,7 +222,7 @@ export default {
     background-color: transparent;
     // width: 27.85%;
     width: 100%;
-    height: 50px;
+    // height: 50px;
     font-size: 17px;
     color: #0e2469;
     &:focus {

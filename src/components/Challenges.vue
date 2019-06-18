@@ -19,7 +19,7 @@
       </router-link>
     </div>
     <div class="main-container container-fluid listStyle">
-      <b-button-group v-for="challenge in filter2()" :key="challenge.id" class="list-item">
+      <b-button-group v-for="challenge in filter()" :key="challenge.id" class="list-item">
         <!-- <b-button @click="showChallenge(challenge)" class="challenge">
           <b-img
             rounded="circle"
@@ -40,41 +40,19 @@
           {{upCase(challenge.title)}}
         </router-link>
 
-        <!-- <b-button @click="showChallenge(challenge)" class="user">
-          <b-row>  
-            <b-col cols="2">
-              <b-img
-                rounded="circle"
-                class="imageStyle"
-                :src="getImage(challenge.picture)"
-                alt="Circle image"
-              ></b-img>
-            </b-col>
-            <b-col cols="10">
-              <b-row>
-                {{upCase(challenge.title)}}
-                {{challenge.title}}
-              </b-row>
-              <b-row>
-                <span class="extra">{{challenge.ideas}} idea(s) publicada(s)</span>
-              </b-row>
-              <b-row>
-                <span class="extra">{{challenge.description}}</span>
-              </b-row>
-            </b-col>
-          </b-row>
-        </b-button> -->
-        <!-- <b-button class="block" @click="blockUser(user.id)">
-          <font-awesome-icon icon="user-slash"></font-awesome-icon>
-        </b-button>-->
         <b-button class="option" @click="deleteChallenge(challenge)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
-      <!-- <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button> -->
     </div>
-    <b-modal id="showChallenge" :title="challenge.title" class="modalStyle" hide-footer style="max-width: 700px; max-width: 120%;">
-    <!-- <b-modal id="showChallenge" :title="upCase(challenge.title)" hide-footer> -->
+
+
+
+
+
+
+    <!-- <b-modal id="showChallenge" :title="challenge.title" class="modalStyle" hide-footer style="max-width: 700px; max-width: 120%;">
+    <b-modal id="showChallenge" :title="upCase(challenge.title)" hide-footer>
       <div class="modal-container container-fluid">
         <b-img
           rounded="circle"
@@ -84,31 +62,17 @@
         ></b-img>
         <p>
           <b>Ideas Publicadas:</b>
-          <!-- <input
-            type="email"
-            class="form-control inputStyles"
-            placeholder="ej. example@email.com"
-            v-model="userCredentials.email"
-            v-validate="'required|email'"
-            :class="{'has-error': errors.has('email_invalid')}"
-            name="email"
-            @keydown.space.prevent
-          > -->
-          <!-- <input
-            v-model="challenge.ideas"
-          > -->
           {{challenge.ideas}}
         </p>
         <p>
           <b>Descripción breve:</b>
-          <!-- {{challenge.short-description}} -->
         </p>
         <p>
           <b>Descripción detallada:</b>
           {{challenge.description}}
         </p>
       </div>
-    </b-modal>
+    </b-modal> -->
     <vue-snotify></vue-snotify>
   </section>
 </template>
@@ -147,14 +111,13 @@ export default {
           console.log(err.response);
         });
     },
-    filter2() {
+    filter() {
       var list = [];
       if (this.search != "" && this.search != null) {
         var here = this;
         list = here.challenges.filter(function(challenge) {
           return (
             challenge.title.includes(here.search.toLowerCase()) ||
-            // challenge.short-description.includes(here.search.toLowerCase()) ||
             challenge.description.includes(here.search.toLowerCase())
           );
         });
@@ -206,76 +169,9 @@ export default {
         }
       );
     },
-    
-
-
-    // getName(name, last) {
-    //   return name + " " + last;
-    // },
-    
-    // getUsers() {
-    //   api.user
-    //     .get()
-    //     .then(response => {
-    //       this.users = response.data;
-    //     })
-    //     .catch(err => {
-    //       console.log(err.response);
-    //     });
-    // },
-    // pagination() {
-    //   return this.page * this.size < this.users.length;
-    // },
-    
-    // blockUser(id) {
-    //   console.log("Usuario bloqueado");
-    // },
-    // filter() {
-    //   var list = [];
-    //   if (this.search != "" && this.search != null) {
-    //     var here = this;
-    //     list = here.users.filter((user) => {
-    //       return (
-    //         here
-    //           .getName(user.name, user.lastname).includes(here.search.toLowerCase()) ||
-    //         user.cc.includes(here.search.toLowerCase()) ||
-    //         user.email.includes(here.search.toLowerCase())
-    //       );
-    //     });
-    //   } else {
-    //     list = this.users;
-    //   }
-    //   return list.slice(0, this.page * this.size);
-    // },
-    // nextPage() {
-    //   this.page = this.page + 1;
-    // },
-    
-    // getGender(gender) {
-    //   switch (gender) {
-    //     case "male":
-    //       return "Masculino";
-    //       break;
-    //     case "female":
-    //       return "Femenino";
-    //       break;
-    //     case "other":
-    //       return "Otro";
-    //     case "i_prefer_not_to_say":
-    //       return "Prefiero no decir";
-    //       break;
-
-    //     default:
-    //       return "";
-    //       break;
-    //   }
-    // },
   },
   created() {
     this.getChallenges();
-    
-
-    // this.getUsers();
   }
 };
 </script>
