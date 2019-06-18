@@ -23,7 +23,6 @@
               v-model="challenge.picture"
               accept="image/jpeg, image/png"
               style="display:none;"
-              @change="checkSize()"
               ref="fileInput"
               v-validate="'size:2000'"
               :class="{'has-error': errors.has('image_size')}"
@@ -78,7 +77,7 @@
             </button>
             <router-link
               to="/challenges" 
-              tag="button" 
+              tag="button"
               class="btn btn-primary btn-lg btnStyle btnCancelStyle"
             >Cancelar</router-link>
           </b-col>
@@ -115,6 +114,7 @@ export default {
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }
+
   },
   methods: {
     allValidInputs(){
@@ -126,12 +126,13 @@ export default {
       }
     },
     acceptChallenge(){
+      console.log(this.challengeID)
       var newChallenge = new FormData();
       newChallenge.append("title", this.challenge.title);
       newChallenge.append("short_description", this.challenge.short_description);
       newChallenge.append("description", this.challenge.description);
-      if (this.challenge.picture != null) challenge.append("image", this.challenge.picture);
-      
+      if (this.challenge.picture != null) newChallenge.append("image", this.challenge.picture);
+
       if (this.challengeID == 'new') {
         api.challenges
         .create(newChallenge)
@@ -155,10 +156,16 @@ export default {
       }
     },
     getImage() {
-      if (this.challenge.picture == null) {
+      if (this.challenge.image == null) {
         if (this.challenge.picture == null) return "http://placehold.it/100x100";
         else return this.challenge.picture.url;
-      } else return URL.createObjectURL(this.challenge.picture);
+      } else return URL.createObjectURL(this.challenge.image);
+
+
+      // if (this.challenge.challenge_pictures == null) {
+      //   if (this.challenge.picture == null) return "http://placehold.it/100x100";
+      //   else return this.challenge.picture;
+      // } else return URL.createObjectURL(this.challenge.picture);
     },
   }
 }
@@ -172,6 +179,7 @@ export default {
 }
 .challenge-picture {
   max-height: 135px;
+  max-width: 100%;
   margin-bottom: 10px;
 }
 .btnStyle {

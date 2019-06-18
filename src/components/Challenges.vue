@@ -2,9 +2,7 @@
   <section>
     <Header></Header>
     <div class="fixed">
-      <!-- <router-link tag="b-button" class="button btnStyle" to="/challenges">
-        Inicio
-      </router-link> -->
+      <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Retos</h1>
       <div class="input-group">
         <input
@@ -20,16 +18,6 @@
     </div>
     <div class="main-container container-fluid listStyle">
       <b-button-group v-for="challenge in filter()" :key="challenge.id" class="list-item">
-        <!-- <b-button @click="showChallenge(challenge)" class="challenge">
-          <b-img
-            rounded="circle"
-            class="avatar img-responsive"
-            :src="getImage(challenge.challenge_pictures[0])"
-            alt="Circle image"
-          ></b-img>
-          {{upCase(challenge.title)}}
-        </b-button> -->
-
         <router-link tag="b-button" class="challenge" :to='"/add_edit_challenge/" + challenge.id'>
           <b-img
             rounded="circle"
@@ -40,39 +28,11 @@
           {{upCase(challenge.title)}}
         </router-link>
 
-        <b-button class="option" @click="deleteChallenge(challenge)">
+        <b-button class="option" @click="deleteChallenge(challenge.id)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
     </div>
-
-
-
-
-
-
-    <!-- <b-modal id="showChallenge" :title="challenge.title" class="modalStyle" hide-footer style="max-width: 700px; max-width: 120%;">
-    <b-modal id="showChallenge" :title="upCase(challenge.title)" hide-footer>
-      <div class="modal-container container-fluid">
-        <b-img
-          rounded="circle"
-          class="picture img-responsive"
-          :src="getImage(challenge.url)"
-          alt="Circle image"
-        ></b-img>
-        <p>
-          <b>Ideas Publicadas:</b>
-          {{challenge.ideas}}
-        </p>
-        <p>
-          <b>Descripción breve:</b>
-        </p>
-        <p>
-          <b>Descripción detallada:</b>
-          {{challenge.description}}
-        </p>
-      </div>
-    </b-modal> -->
     <vue-snotify></vue-snotify>
   </section>
 </template>
@@ -98,9 +58,6 @@ export default {
     };
   },
   methods: {
-    createChallenge(){
-      console.log('nuevo challenge')
-    },
     getChallenges() {
       api.challenges
         .index()
@@ -109,6 +66,7 @@ export default {
         })
         .catch(err => {
           console.log(err.response);
+          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
     filter() {
@@ -140,7 +98,7 @@ export default {
     upCase(str) {
       return api.utils.upcase(str);
     },
-    deleteChallenge(challenge) {
+    deleteChallenge(challengeID) {
       this.$snotify.confirm(
         "¿Estás seguro que desea eliminar este reto?",
         "Eliminar reto",
@@ -153,14 +111,17 @@ export default {
             {
               text: "Borrar",
               action: () => {
-                api.user.delete(user.id).then(response => {
-                  this.getUsers();
+                api.challenges.delete(challengeID).then(response => {
+                  this.getChallenges();
                   this.$snotify.success("Reto eliminado", "Éxito", {
                     timeout: 2000,
                     showProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true
                   });
+                }).catch((err) => {
+                  console.log(err)
+                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 });
               }
             },
@@ -178,6 +139,13 @@ export default {
 
 <style lang="scss" scoped>
 .btnStyle {
+  height: 50px;
+  border-radius: 5px;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  border-color: #0E2469;
+} 
+.btnStyle {
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -193,9 +161,12 @@ export default {
   .input-group {
     width: calc(100vw - 30px) !important;
   }
+  .btnBack {
+    margin-top: 10px;
+  }
 }
 .main-container {
-  padding-top: 270px;
+  padding-top: 330px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;
@@ -211,7 +182,7 @@ export default {
     }
     .option {
       width: 50px;
-      background-color: #ed1d24;
+      background-color: #c7161c;
       color: white;
     }
     .edit-icon {

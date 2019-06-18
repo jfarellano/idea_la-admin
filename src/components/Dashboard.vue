@@ -9,6 +9,9 @@
     <router-link tag="b-button" class="button btnStyle" to="/challenges">
       <font-awesome-icon icon="th-large" /> Retos
     </router-link>
+    <router-link tag="b-button" class="button btnStyle" to="/ideas">
+      <font-awesome-icon icon="lightbulb" /> Ideas
+    </router-link>
   </div>
 </section>
 </template>

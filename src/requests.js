@@ -40,8 +40,8 @@ export default {
     },
   },
   ideas: {
-    index: function(){
-      return r.get(SERVER_URL + '/ideas')
+    indexAll: function(){
+      return r.get(SERVER_URL + '/all_ideas')
     }
   },
   challenge: {

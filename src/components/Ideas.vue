@@ -3,12 +3,12 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Usuarios</h1>
+      <h1>Ideas</h1>
       <div class="input-group">
         <input
           type="text"
           class="form-control inputStyles"
-          placeholder="Búsqueda: Nombre, correo, C.C."
+          placeholder="Buscar"
           v-model="search"
         >
       </div>
@@ -25,9 +25,6 @@
           {{upCase(getName(user.name, user.lastname))}}
           <span class="extra">{{user.email}}</span>
         </b-button>
-        <!-- <b-button class="block" @click="blockUser(user.id)">
-          <font-awesome-icon icon="user-slash"></font-awesome-icon>
-        </b-button>-->
         <b-button class="option" @click="deleteUser(user)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
@@ -82,6 +79,8 @@ export default {
   },
   data() {
     return {
+      ideas:[],
+
       users: [],
       search: "",
       user: {},
@@ -100,11 +99,11 @@ export default {
         return "https://via.placeholder.com/150";
       }
     },
-    getUsers() {
-      api.user
-        .get()
+    getIdeas() {
+      api.ideas
+        .indexAll()
         .then(response => {
-          this.users = response.data;
+          this.ideas = response.data;
         })
         .catch(err => {
           console.log(err.response);
@@ -129,7 +128,7 @@ export default {
               text: "Borrar",
               action: () => {
                 api.user.delete(user.id).then(response => {
-                  this.getUsers();
+                  this.getIdeas();
                   this.$snotify.success("Usuario eliminado", "Exito", {
                     timeout: 2000,
                     showProgressBar: false,
@@ -199,7 +198,7 @@ export default {
     }
   },
   created() {
-    this.getUsers();
+    this.getIdeas();
   }
 };
 </script>

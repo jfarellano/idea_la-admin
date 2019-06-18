@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard.vue'
 import Users from './components/Users'
 import Challenges from './components/Challenges.vue'
 import CreateEditChallenge from './components/CreateEditChallenge.vue'
+import Ideas from './components/Ideas.vue'
 
 Vue.use(Router)
 export default new Router ({
@@ -34,6 +35,11 @@ export default new Router ({
             path: '/add_edit_challenge/:challengeID',
             name: 'CreateEditChallenge',
             component: CreateEditChallenge
+        },
+        {
+            path: '/ideas',
+            name: 'Ideas',
+            component: Ideas
         },
     ]
 })
