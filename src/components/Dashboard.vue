@@ -12,6 +12,9 @@
     <router-link tag="b-button" class="button btnStyle" to="/ideas">
       <font-awesome-icon icon="lightbulb" /> Ideas
     </router-link>
+    <router-link tag="b-button" class="button btnStyle" to="/stages">
+      <font-awesome-icon icon="project-diagram" /> Etapas
+    </router-link>
   </div>
 </section>
 </template>

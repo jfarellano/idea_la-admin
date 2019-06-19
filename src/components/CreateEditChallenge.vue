@@ -7,7 +7,44 @@
       <br>
       <b-row class="margins-content">
         <b-col cols="4" align="center">
-          <b-img class="challenge-picture" :src="getImage()"/>
+          <b-button
+            @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
+            class="loadBtn"
+          >Carga tu imagen</b-button>
+          <b-form-file
+            v-model="challenge.newPicture"
+            accept="image/jpeg, image/png"
+            style="display:none;"
+            ref="fileInput"
+            v-validate="'size:2000'"
+            :class="{'has-error': errors.has('image_size')}"
+            name="image"
+          />
+          <p v-if="challenge.newPicture != null" class="selectedImage">{{challenge.newPicture.name}}</p>
+          <p
+            v-if="errors.has('image')"
+            class="incorrectInput"
+          >La imagen es muy grande, el maximo son 2MB</p>
+
+
+
+          <!-- CAMBIAR IMAGEN -->
+          <!-- <b-button-group class="loadBtn" v-else>
+            <b-button
+              class="text"
+              @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
+            >Cambia tu imagen</b-button>
+            <b-button class="icon" @click="clearImage()">
+              <font-awesome-icon icon="times"></font-awesome-icon>
+            </b-button>
+          </b-button-group> -->
+          <!-- CAMBIAR IMAGEN -->
+
+
+          
+
+
+          <!-- <b-img v-if='this.challenge.challenge_pictures != null' class="challenge-picture" :src="challenge.challenge_pictures[0].url"/>
           <b-button
               @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
               class="loadBtn"
@@ -32,7 +69,9 @@
             <p
               v-if="errors.has('image')"
               class="incorrectInput"
-            >La imagen es muy grande, el maximo son 2MB</p>
+            >La imagen es muy grande, el maximo son 2MB</p> -->
+
+
         </b-col>
         <b-col cols="8">
           <!-- PENDIENTE ROUTER LINK A IDEAS DEL RETO YA FILTRADAS -->
@@ -66,13 +105,18 @@
       </b-row>
       <b-row class="margins-content">
         <b-col align="center">
-            <button
+            <!-- <button
               type="button"
               class="btn btn-primary btn-lg btnStyle btnContinueStyle"
               v-on:click.prevent="acceptChallenge()"
               :disabled='allValidInputs()'
+            > -->
+            <button
+              type="button"
+              class="btn btn-primary btn-lg btnStyle btnContinueStyle"
+              v-on:click.prevent="acceptChallenge()"
             >
-            <p v-if="challengeID == 'new'">Aceptar</p>
+            <p v-if="challengeID == 'new'">Crear</p>
             <p v-else>Guardar</p>
             </button>
             <router-link
@@ -83,6 +127,7 @@
           </b-col>
       </b-row>
     </div>
+    <Alert ref="alert"></Alert >
   </section>
 </template>
 
@@ -90,19 +135,24 @@
 import Header from "./Header";
 import auth from "../authentication.js";
 import api from "../requests.js";
+import Alert from "./Alert.vue"
 
 export default {
   components: {
-    Header
+    Header,
+    Alert
   },
   data(){
     return{
+      test: [],
+
       challengeID: '',
-      challenge: {}
+      challenge: {},
     }
   },
   created(){
     this.challengeID = this.$route.params.challengeID;
+    
     if (this.challengeID != 'new') {
       api.challenge
       .getInfo(this.challengeID)
@@ -114,11 +164,12 @@ export default {
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }
-
   },
   methods: {
     allValidInputs(){
-      if (this.challenge.picture != null || this.challenge.title == '' || 
+      // if (this.challenge.challenge_pictures != null || this.challenge.title == '' || 
+      // this.challenge.short_description == '' || this.challenge.description == '') {
+      if (this.challenge.title == '' || 
       this.challenge.short_description == '' || this.challenge.description == '') {
         return false;
       } else {
@@ -126,18 +177,18 @@ export default {
       }
     },
     acceptChallenge(){
-      console.log(this.challengeID)
-      var newChallenge = new FormData();
-      newChallenge.append("title", this.challenge.title);
-      newChallenge.append("short_description", this.challenge.short_description);
-      newChallenge.append("description", this.challenge.description);
-      if (this.challenge.picture != null) newChallenge.append("image", this.challenge.picture);
+      var fd = new FormData();
+      fd.append('title', this.challenge.title);
+      fd.append('short_description', this.challenge.short_description)
+      fd.append('description', this.challenge.description)
+      if (this.challenge.newPicture != null) fd.append("image", this.challenge.newPicture) 
 
       if (this.challengeID == 'new') {
         api.challenges
-        .create(newChallenge)
-        .then(() => {
-          this.$router.push("/challenges");
+        .create(fd)
+        .then((response) => {
+          this.$refs.alert.success('Reto creado.')
+          this.$router.push("/challenges")
         })
         .catch((err) => {
           console.log(err)
@@ -145,28 +196,51 @@ export default {
         })
       } else {
         api.challenges
-        .update(newChallenge)
+        .update(fd, this.challengeID)
         .then(() => {
-          this.$router.push("/challenges");
+          this.$refs.alert.success('Reto modificado.')
+          this.$router.push("/challenges")
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err.data)
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       }
-    },
-    getImage() {
-      if (this.challenge.image == null) {
-        if (this.challenge.picture == null) return "http://placehold.it/100x100";
-        else return this.challenge.picture.url;
-      } else return URL.createObjectURL(this.challenge.image);
 
 
-      // if (this.challenge.challenge_pictures == null) {
-      //   if (this.challenge.picture == null) return "http://placehold.it/100x100";
-      //   else return this.challenge.picture;
-      // } else return URL.createObjectURL(this.challenge.picture);
-    },
+      // var newChallenge = new FormData();
+      // newChallenge.append("title", this.challenge.title);
+      // newChallenge.append("short_description", this.challenge.short_description);
+      // newChallenge.append("description", this.challenge.description);
+      // if (this.challenge.picture != null) newChallenge.append("image", this.challenge.picture);
+
+      // console.log(newChallenge.title)
+
+
+      // if (this.challengeID == 'new') {
+      //   console.log(newChallenge)
+      //   api.challenges
+      //   .create(newChallenge)
+      //   .then(() => {
+      //     this.$router.push("/challenges");
+      //   })
+      //   .catch((err) => {
+      //     console.log(err)
+      //     this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      //   })
+      // } 
+      // else {
+      //   api.challenges
+      //   .update(newChallenge)
+      //   .then(() => {
+      //     this.$router.push("/challenges");
+      //   })
+      //   .catch((err) => {
+      //     console.log(err.data)
+      //     this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      //   })
+      // }
+    }
   }
 }
 </script>

@@ -20,29 +20,35 @@ export default {
     upcase: function (str) {
       var splitStr = str.toLowerCase().split(' ');
       for (var i = 0; i < splitStr.length; i++) {
-          splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
       }
-      return splitStr.join(' '); 
+      return splitStr.join(' ');
     }
   },
   challenges: {
+    indexAll: function () {
+      return r.get(SERVER_URL + '/all_challenges', getHeaders())
+    },
     index: function () {
       return r.get(SERVER_URL + '/challenges')
     },
     create: function (body) {
-      return r.post(SERVER_URL + '/challenges', body ,getHeaders)
+      return r.post(SERVER_URL + '/challenges', body, getHeaders())
     },
-    update: function (body) {
-      return r.put(SERVER_URL + '/challenges/' + challengeID, body ,getHeaders)
+    update: function (body, challengeID) {
+      return r.put(SERVER_URL + '/challenges/' + challengeID, body, getHeaders())
     },
     delete: function(challengeID) {
-      return r.del(SERVER_URL + '/challenges/' + challengeID)
+      return r.delete(SERVER_URL + '/challenges/' + challengeID, getHeaders())
     },
   },
   ideas: {
     indexAll: function(){
-      return r.get(SERVER_URL + '/all_ideas')
-    }
+      return r.get(SERVER_URL + '/all_ideas', getHeaders())
+    },
+    delete: function(ideaID) {
+      return r.delete(SERVER_URL + '/ideas/' + ideaID, getHeaders())
+    },
   },
   challenge: {
     getInfo: function(challengeID) {
@@ -54,7 +60,7 @@ export default {
   },
   createEditIdea: {
     createIdea: function(body) {
-      return r.post(SERVER_URL + '/ideas', body, getHeaders)
+      return r.post(SERVER_URL + '/ideas', body, getHeaders())
     }
   },
   idea: {
@@ -69,7 +75,7 @@ export default {
     },
     postComment: function(ideaID, body) {
       return r.post(SERVER_URL + '/ideas/' + ideaID + '/comments', body, getHeaders())
-    }
+    },
   },
   myProfile: {
     getIdeas: function() {

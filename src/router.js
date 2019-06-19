@@ -7,6 +7,7 @@ import Users from './components/Users'
 import Challenges from './components/Challenges.vue'
 import CreateEditChallenge from './components/CreateEditChallenge.vue'
 import Ideas from './components/Ideas.vue'
+import Stages from './components/Stages.vue'
 
 Vue.use(Router)
 export default new Router ({
@@ -40,6 +41,11 @@ export default new Router ({
             path: '/ideas',
             name: 'Ideas',
             component: Ideas
+        },
+        {
+            path: '/stages',
+            name: 'Stages',
+            component: Stages
         },
     ]
 })

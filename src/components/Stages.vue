@@ -3,67 +3,11 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Ideas</h1>
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control inputStyles"
-          placeholder="Buscar"
-          v-model="search"
-        >
-      </div>
+      <h1>Etapas</h1>
+      <b-col align="center">
+        
+      </b-col>
     </div>
-    <div class="main-container container-fluid">
-      <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
-        <b-button @click="showIdea(idea)" class="user">
-          <b-img
-            rounded="circle"
-            class="avatar img-responsive"
-            :src="idea.idea_pictures[0].url"
-            alt="Circle image"
-          ></b-img>
-          {{idea.title}}
-          <span class="extra">{{idea.votes}} voto(s)</span>
-        </b-button>
-        <!-- <b-button class="block" @click="blockUser(user.id)">
-          <font-awesome-icon icon="user-slash"></font-awesome-icon>
-        </b-button>-->
-        <b-button class="option" @click="deleteIdea(idea)">
-          <font-awesome-icon icon="trash"></font-awesome-icon>
-        </b-button>
-      </b-button-group>
-      <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
-    </div>
-    <b-modal id="showIdea" :title="idea.title" hide-footer>
-      <div class="modal-container container-fluid">
-        <b-img
-          v-if="idea.idea_pictures != null"
-          rounded="circle"
-          class="picture img-responsive"
-          :src="idea.idea_pictures[0].url"
-          alt="Circle image"
-        ></b-img>
-        <div class="leftModalContent">
-          <p>
-            <!-- <b>Votos:</b> -->
-            {{idea.votes}} voto(s)
-          </p>
-          <p>
-            <!-- <b>Comentarios:</b> -->
-            <router-link to="/comments">{{idea.comments}} comentario(s)</router-link>
-            <!-- {{idea.comments}} comentario(s) -->
-          </p>
-          <p v-if="idea.user != null">
-            <b>Por:</b>
-            {{upCase(getName(idea.user.name, idea.user.lastname))}}
-          </p>
-          <p>
-            <b>Descripción:</b><br>
-            {{idea.description}}
-          </p>
-        </div> 
-      </div>
-    </b-modal>
     <Alert ref="alert"></Alert >
   </section>
 </template>
@@ -72,7 +16,7 @@
 import Header from "./Header";
 import auth from "../authentication.js";
 import api from "../requests.js";
-import Alert from "./Alert.vue"
+import Alert from "./Alert.vue";
 
 export default {
   components: {
@@ -81,12 +25,9 @@ export default {
   },
   data() {
     return {
-      ideas: [],
-      idea: {},
-
-      // users: [],
+      users: [],
       search: "",
-      // user: {},
+      user: {},
       page: 1,
       size: 10
     };
@@ -102,11 +43,11 @@ export default {
         return "https://via.placeholder.com/150";
       }
     },
-    getIdeas() {
-      api.ideas
-        .indexAll()
+    getUsers() {
+      api.user
+        .get()
         .then(response => {
-          this.ideas = response.data;
+          this.users = response.data;
         })
         .catch(err => {
           console.log(err.response);
@@ -114,12 +55,13 @@ export default {
         });
     },
     pagination() {
-      return this.page * this.size < this.ideas.length;
+      return this.page * this.size < this.users.length;
     },
-    deleteIdea(idea) {
+    deleteUser(user) {
       this.$snotify.confirm(
-        "¿Estas seguro que quieres eliminar esta idea?",
-        "Eliminar idea",
+        "¿Estas seguro que quieres eliminar a " +
+          this.upCase(this.getName(user.name, user.lastname)) + "?",
+        "Eliminar usuario",
         {
           timeout: 2000,
           showProgressBar: true,
@@ -129,9 +71,9 @@ export default {
             {
               text: "Borrar",
               action: () => {
-                api.ideas.delete(idea.id).then(response => {
-                  this.getIdeas();
-                  this.$snotify.success("Idea eliminado", "Éxito", {
+                api.user.delete(user.id).then(response => {
+                  this.getUsers();
+                  this.$snotify.success("Usuario eliminado", "Exito", {
                     timeout: 2000,
                     showProgressBar: false,
                     closeOnClick: true,
@@ -155,44 +97,57 @@ export default {
       var list = [];
       if (this.search != "" && this.search != null) {
         var here = this;
-        list = here.ideas.filter(function(idea) {
+        list = here.users.filter(function(user) {
           return (
-            idea.title.toLowerCase().includes(here.search.toLowerCase())
-
-
-            // here
-            //   .getName(user.name, user.lastname)
-            //   .includes(here.search.toLowerCase()) ||
-            // user.cc.includes(here.search.toLowerCase()) ||
-            // user.email.includes(here.search.toLowerCase())
+            here
+              .getName(user.name, user.lastname)
+              .includes(here.search.toLowerCase()) ||
+            user.cc.includes(here.search.toLowerCase()) ||
+            user.email.includes(here.search.toLowerCase())
           );
         });
       } else {
-        list = this.ideas;
+        list = this.users;
       }
       return list.slice(0, this.page * this.size);
     },
     nextPage() {
       this.page = this.page + 1;
     },
-    showIdea(idea) {
-      this.idea = idea;
-      this.$bvModal.show("showIdea");
+    showUser(user) {
+      this.user = user;
+      this.$bvModal.show("showUser");
+    },
+    getGender(gender) {
+      switch (gender) {
+        case "male":
+          return "Masculino";
+          break;
+        case "female":
+          return "Femenino";
+          break;
+        case "other":
+          return "Otro";
+        case "i_prefer_not_to_say":
+          return "Prefiero no decir";
+          break;
+
+        default:
+          return "";
+          break;
+      }
     },
     upCase(str) {
       return api.utils.upcase(str);
     }
   },
   created() {
-    this.getIdeas();
+    this.getUsers();
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.leftModalContent {
-  text-align: left;
-}
 .fixed {
   position: fixed;
   z-index: 100;

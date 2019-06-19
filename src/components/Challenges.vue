@@ -33,7 +33,7 @@
         </b-button>
       </b-button-group>
     </div>
-    <vue-snotify></vue-snotify>
+    <Alert ref="alert"></Alert >
   </section>
 </template>
 
@@ -41,9 +41,12 @@
 import Header from "./Header";
 import auth from "../authentication.js";
 import api from "../requests.js";
+import Alert from "./Alert.vue"
+
 export default {
   components: {
-    Header
+    Header,
+    Alert
   },
   data() {
     return {
@@ -60,7 +63,7 @@ export default {
   methods: {
     getChallenges() {
       api.challenges
-        .index()
+        .indexAll()
         .then(response => {
           this.challenges = response.data;
         })
