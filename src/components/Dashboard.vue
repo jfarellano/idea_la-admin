@@ -15,9 +15,9 @@
     <router-link tag="b-button" class="button btnStyle" to="/stages">
       <font-awesome-icon icon="project-diagram" /> Etapas
     </router-link>
-    <router-link tag="b-button" class="button btnStyle" to="/comments/all">
+    <!-- <router-link tag="b-button" class="button btnStyle" to="/comments/all">
       <font-awesome-icon icon="comments" /> Comentarios
-    </router-link>
+    </router-link> -->
   </div>
 </section>
 </template>
