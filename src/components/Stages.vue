@@ -7,7 +7,7 @@
       <b-col align="center" class="main-container">
         <h2>Etapa actual: {{currentStage.number}}</h2>
         <b-row align="left">
-          <p>Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. </p>
+          <p>{{nextStageDescription(currentStage.number)}}</p>
         </b-row>
         <b-row>
           <b-col align="center">
@@ -73,17 +73,20 @@ export default {
   methods: {
     nextStageDescription(nextStage) {
       switch(nextStage) {
+        case 0:
+          return 'La página muestra la información e imágenes. Permita la creación, modificación y eliminación de retos. No se pueden publicar ideas, solo se pueden registrar usuarios.'
+          break;
         case 1:
-          return 'Descripción del stage 1'
+          return 'La página ya cuenta con los retos y las personas pueden comenzar a publicar ideas y comentarios. Se pueden registrar usuarios, no están todavía disponibles los votos de ideas pero cada usuario puede editar sus ideas un máximo de 2 veces. No se pueden agregar mas retos.'
           break;
         case 2:
-          return 'Descripción del stage 2'
+          return 'Se pueden registrar usuarios. Se cierran las publicaciones de idas y el panel administrativo está abierto para seleccionar las que pasarán a votación. '
           break;
         case 3:
-          return 'Descripción del stage 3'
+          return 'Sólo se muestran las ideas preseleccionadas (5 por cada reto), los usuarios podrán votar por una sola idea dentro de cada reto y comentar las ideas las veces que quieran. Se pueden registrar usuarios. No se pueden publicar mas ideas. No se pueden editar ideas. No se pueden agregar mas retos.'
           break;
         case 4:
-          return 'Descripción del stage 4'
+          return 'Se cierran la votaciones y solo se muestran las ideas ganadoras por cada reto. Los usuarios pueden seguir comentando las ideas ganadoras. Se pueden registrar usuarios. No se puede votar por ideas. No se pueden agregar mas ideas. No se pueden editar ideas. No se puede agregar mas retos.'
           break;
           break;
         default:
