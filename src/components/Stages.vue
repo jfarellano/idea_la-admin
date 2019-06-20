@@ -5,13 +5,13 @@
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Etapas</h1>
       <b-col align="center" class="main-container">
-        <h2>Etapa actual: {{currentState.number}}</h2>
+        <h2>Etapa actual: {{currentStage.number}}</h2>
         <b-row align="left">
           <p>Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. </p>
         </b-row>
         <b-row>
           <b-col align="center">
-            <div v-if="currentState.number != 4">
+            <div v-if="currentStage.number != 4">
               <button
                 type="button"
                 class="btn btn-primary btn-lg btnStyle"
@@ -27,8 +27,8 @@
       </b-col>
       <b-modal id="showNextStage" title="Siguiente Etapa" hide-footer>
         <div class="modal-container container-fluid">
-          <h3>Etapa 1</h3>
-          <p>Descripcion de la siguiente etapa. Descripcion de la siguiente etapa. Descripcion de la siguiente etapa. Descripcion de la siguiente etapa. </p>
+          <h3>Etapa {{((currentStage.number + 1) % 5)}}</h3>
+          <p>{{nextStageDescription((currentStage.number + 1) % 5)}}</p>
           <br>
           <b>ATENCIÓN:</b><br>
           <b>Los cambios son irreversibles luego de pasar a la siguiente etapa.</b><br>
@@ -37,7 +37,7 @@
             <button
               type="button"
               class="btn btn-primary btn-lg btnStyle btnModal"
-              @click="confirmNextState()"
+              @click="confirmNextStage()"
             >SI
             </button>
             <button
@@ -67,10 +67,30 @@ export default {
   },
   data() {
     return {
-      currentState: {}
+      currentStage: {}
     };
   },
   methods: {
+    nextStageDescription(nextStage) {
+      switch(nextStage) {
+        case 1:
+          return 'Descripción del stage 1'
+          break;
+        case 2:
+          return 'Descripción del stage 2'
+          break;
+        case 3:
+          return 'Descripción del stage 3'
+          break;
+        case 4:
+          return 'Descripción del stage 4'
+          break;
+          break;
+        default:
+          return 'Ha ocurrido un error'
+          break;
+      } 
+    },
     showNextStage(){
       this.$bvModal.show("showNextStage");
     },
@@ -81,7 +101,26 @@ export default {
       api.stages
       .setNext()
       .then(() => {
-        this.$router.go()
+        this.$refs.alert.success('Se ha pasado a la siguiente etapa.')
+        this.$bvModal.hide("showNextStage");
+        this.getCurrentStage();
+      })
+      .catch((err) => {
+        console.log(err)
+        if (err.response != null){
+          if (err.response.data.authorization == 'There are not enough ideas created, minimum 5 per challenge') {
+            this.$refs.alert.error('No hay suficientes ideas para pasar de etapa.')
+          }
+        } else {
+          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        }
+      })
+    },
+    getCurrentStage(){
+      api.stages
+      .getCurrent()
+      .then((response) => {
+        this.currentStage = response.data
       })
       .catch((err) => {
         console.log(err)
@@ -90,17 +129,7 @@ export default {
     }
   },
   created() {
-    console.log('entra created')
-    api.stages
-    .getCurrent()
-    .then((response) => {
-      console.log('entra')
-      this.currentState = response.data
-    })
-    .catch((err) => {
-      console.log(err)
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-    })
+    this.getCurrentStage();
   }
 };
 </script>
@@ -139,8 +168,12 @@ export default {
   }
 }
 .main-container {
-  padding-right: 350px;
-  padding-left: 350px;
+  padding-right: 250px;
+  padding-left: 250px;
+  @media (max-width: 800px) {
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+  }
 }
 .modal-container {
   text-align: left;
@@ -151,14 +184,6 @@ export default {
   b {
     color: #c7161c;
   }
-  // .picture {
-  //   width: 150px;
-  //   height: 150px;
-  //   margin-bottom: 12px;
-  // }
-  // p {
-  //   color: #0e2469;
-  // }
 }
 .modal-title {
   color: #0e2469;

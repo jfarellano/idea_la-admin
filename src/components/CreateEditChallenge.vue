@@ -25,60 +25,17 @@
             v-if="errors.has('image')"
             class="incorrectInput"
           >La imagen es muy grande, el maximo son 2MB</p>
-
-
-
-          <!-- CAMBIAR IMAGEN -->
-          <!-- <b-button-group class="loadBtn" v-else>
-            <b-button
-              class="text"
-              @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
-            >Cambia tu imagen</b-button>
-            <b-button class="icon" @click="clearImage()">
-              <font-awesome-icon icon="times"></font-awesome-icon>
-            </b-button>
-          </b-button-group> -->
-          <!-- CAMBIAR IMAGEN -->
-
-
-          
-
-
-          <!-- <b-img v-if='this.challenge.challenge_pictures != null' class="challenge-picture" :src="challenge.challenge_pictures[0].url"/>
-          <b-button
-              @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
-              class="loadBtn"
-              v-if="challenge.picture == null"
-            >Carga una imagen</b-button>
-            <b-button-group class="loadBtn" v-else>
-              <b-button
-                class="text"
-                @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
-              >Cambia tu imagen</b-button>
-            </b-button-group>
-            <b-form-file
-              v-model="challenge.picture"
-              accept="image/jpeg, image/png"
-              style="display:none;"
-              ref="fileInput"
-              v-validate="'size:2000'"
-              :class="{'has-error': errors.has('image_size')}"
-              name="image"
-            />
-            <p v-if="challenge.picture != null" class="selectedImage">{{challenge.picture.name}}</p>
-            <p
-              v-if="errors.has('image')"
-              class="incorrectInput"
-            >La imagen es muy grande, el maximo son 2MB</p> -->
-
-
         </b-col>
         <b-col cols="8">
           <!-- PENDIENTE ROUTER LINK A IDEAS DEL RETO YA FILTRADAS -->
           <!-- <router-link class="challenge" :to='"/add_edit_challenge/" + challenge.id'>{{challenge.ideas}} idea(s) publicada(s)</router-link> -->
-          <router-link v-if="challengeID != 'new'" class="challenge" to='/add_edit_challenge'>
-            {{challenge.ideas}} idea(s) publicada(s)
-          </router-link>
+          <div v-if="challengeID != 'new'">
+            <router-link v-if="challenge.ideas > 0" class="challenge" :to='"/ideas/" + challenge.id'>
+              {{challenge.ideas}} idea(s) publicada(s)
+            </router-link>
+            <p v-else>{{challenge.ideas}} idea(s) publicada(s)</p>
+          </div>
+          
           <h5>Título</h5>
           <div class="input-group">
             <input
@@ -115,6 +72,7 @@
               type="button"
               class="btn btn-primary btn-lg btnStyle btnContinueStyle"
               v-on:click.prevent="acceptChallenge()"
+              :disabled='validStage()'
             >
             <p v-if="challengeID == 'new'">Crear</p>
             <p v-else>Guardar</p>
@@ -125,6 +83,11 @@
               class="btn btn-primary btn-lg btnStyle btnCancelStyle"
             >Cancelar</router-link>
           </b-col>
+      </b-row>
+      <b-row>
+        <b-col align="center">
+          <b v-if="currentStage.number != 0">Etapa {{currentStage.number}}: En esta etapa no se pueden crear, modificar ni eliminar retos.</b>
+        </b-col>
       </b-row>
     </div>
     <Alert ref="alert"></Alert >
@@ -145,6 +108,7 @@ export default {
   data(){
     return{
       test: [],
+      currentStage: '',
 
       challengeID: '',
       challenge: {},
@@ -164,8 +128,22 @@ export default {
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }
+
+    api.stages
+    .getCurrent()
+    .then((response) => {
+      this.currentStage = response.data
+    })
+    .catch((err) => {
+      console.log(err)
+      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+    })
   },
   methods: {
+    validStage(){
+      if (this.currentStage.number == 0) return false;
+      else return true;
+    },
     allValidInputs(){
       // if (this.challenge.challenge_pictures != null || this.challenge.title == '' || 
       // this.challenge.short_description == '' || this.challenge.description == '') {
@@ -206,40 +184,6 @@ export default {
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       }
-
-
-      // var newChallenge = new FormData();
-      // newChallenge.append("title", this.challenge.title);
-      // newChallenge.append("short_description", this.challenge.short_description);
-      // newChallenge.append("description", this.challenge.description);
-      // if (this.challenge.picture != null) newChallenge.append("image", this.challenge.picture);
-
-      // console.log(newChallenge.title)
-
-
-      // if (this.challengeID == 'new') {
-      //   console.log(newChallenge)
-      //   api.challenges
-      //   .create(newChallenge)
-      //   .then(() => {
-      //     this.$router.push("/challenges");
-      //   })
-      //   .catch((err) => {
-      //     console.log(err)
-      //     this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-      //   })
-      // } 
-      // else {
-      //   api.challenges
-      //   .update(newChallenge)
-      //   .then(() => {
-      //     this.$router.push("/challenges");
-      //   })
-      //   .catch((err) => {
-      //     console.log(err.data)
-      //     this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-      //   })
-      // }
     }
   }
 }
@@ -289,13 +233,6 @@ export default {
   padding-top: 90px;
   padding-left: 15px;
   padding-right: 15px;
-    // .margins-content {
-    //   padding-left: 70px;
-    //   padding-right: 70px;
-    // }
-  // .input-group {
-  //   width: calc(100vw - 30px) !important;
-  // }
 }
 .loadBtn {
     border: 1px solid #0e2469;

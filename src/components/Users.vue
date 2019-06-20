@@ -23,11 +23,15 @@
             alt="Circle image"
           ></b-img>
           {{upCase(getName(user.name, user.lastname))}}
-          <span class="extra">{{user.email}}</span>
+          <span class="extra">{{user.email}} (C.C. {{user.cc}})</span>
         </b-button>
-        <!-- <b-button class="block" @click="blockUser(user.id)">
+        <b-button class="unblock" @click="blockUser(user.id)" v-if="user.block == null">
+          <font-awesome-icon icon="user"></font-awesome-icon>
+        </b-button>
+        <b-button class="block" @click="unblockUser(user.id)" v-else>
           <font-awesome-icon icon="user-slash"></font-awesome-icon>
-        </b-button>-->
+        </b-button>
+        
         <b-button class="option" @click="deleteUser(user)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
@@ -68,7 +72,7 @@
         </p>
       </div>
     </b-modal>
-    <vue-snotify></vue-snotify>
+    <Alert ref="alert"></Alert >
   </section>
 </template>
 
@@ -76,9 +80,12 @@
 import Header from "./Header";
 import auth from "../authentication.js";
 import api from "../requests.js";
+import Alert from "./Alert.vue";
+
 export default {
   components: {
-    Header
+    Header,
+    Alert
   },
   data() {
     return {
@@ -148,7 +155,30 @@ export default {
       );
     },
     blockUser(id) {
-      console.log("Usuario bloqueado");
+      console.log("Usuario bloqueado: ", id);
+      api.user
+      .block(id)
+      .then((response) => {
+        this.$refs.alert.success('El usuario ha sido bloqueado.')
+        this.getUsers();
+      })
+      .catch((err) => {
+        console.log(err)
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
+    },
+    unblockUser(id){
+      console.log("Usuario desbloqueado: ",id);
+      api.user
+      .unblock(id)
+      .then((response) => {
+        this.$refs.alert.success('El usuario ha sido desbloqueado.')
+        this.getUsers();
+      })
+      .catch((err) => {
+        console.log(err)
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
     },
     filter() {
       var list = [];
@@ -243,8 +273,13 @@ export default {
     }
     .block {
       width: 50px;
-      background-color: transparent;
-      color: #6a6a6a;
+      background-color: #FFA500;
+      color: white;
+    }
+    .unblock {
+      width: 50px;
+      background-color:#0B6623;
+      color: white;
     }
     .avatar {
       width: 34px;

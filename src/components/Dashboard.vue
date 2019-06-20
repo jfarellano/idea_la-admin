@@ -9,11 +9,14 @@
     <router-link tag="b-button" class="button btnStyle" to="/challenges">
       <font-awesome-icon icon="th-large" /> Retos
     </router-link>
-    <router-link tag="b-button" class="button btnStyle" to="/ideas">
+    <router-link tag="b-button" class="button btnStyle" to="/ideas/all">
       <font-awesome-icon icon="lightbulb" /> Ideas
     </router-link>
     <router-link tag="b-button" class="button btnStyle" to="/stages">
       <font-awesome-icon icon="project-diagram" /> Etapas
+    </router-link>
+    <router-link tag="b-button" class="button btnStyle" to="/comments/all">
+      <font-awesome-icon icon="comments" /> Comentarios
     </router-link>
   </div>
 </section>
@@ -36,7 +39,7 @@ export default {
 <style lang="scss" scoped>
 .btnStyle {
   margin: 10px;
-  width: 130px;
+  width: 150px;
 }
 .main-container{
   margin-top: 90px;

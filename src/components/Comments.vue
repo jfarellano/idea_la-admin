@@ -3,13 +3,13 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Ideas</h1>
-      <!-- <router-link v-if="ideaParam != 'all'" tag="b-button" class="button btnBack" to="/ideas/all">Mostrar Todas</router-link> -->
+      <h1>Comentarios</h1>
+      <!-- <router-link v-if="commentsParam != 'all'" tag="b-button" class="button btnBack" to="/comments/all">Mostrar Todas</router-link> -->
       <button
         type="button"
         class="btn btn-primary btnStyle"
-        v-if="ideaParam != 'all'"
-        @click="getIdeas()"
+        v-if="commentsParam != 'all'"
+        @click="getComments()"
       >Mostrar Todas
       </button>
       <div class="input-group">
@@ -22,54 +22,24 @@
       </div>
     </div>
     <div class="main-container container-fluid">
-      <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
-        <b-button @click="showIdea(idea)" class="user">
+      <b-button-group v-for="comment in filter()" :key="comment.id" class="list-item">
+        <div class="user">
           <b-img
             rounded="circle"
             class="avatar img-responsive"
-            :src="idea.idea_pictures[0].url"
+            :src="getImage(comment.user_profile_picture.url)"
             alt="Circle image"
           ></b-img>
-          {{idea.title}}
-          <span class="extra">{{idea.votes}} voto(s)</span>
-        </b-button>
-        <b-button class="option" @click="deleteIdea(idea)">
+          {{upCase(comment.user_name)}}
+          <br>  
+          <span class="extra">{{comment.description}}</span>
+        </div>
+        <b-button class="option" @click="deleteComment(idea)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
       <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
-    <b-modal id="showIdea" :title="idea.title" hide-footer>
-      <div class="modal-container container-fluid">
-        <b-img
-          v-if="idea.idea_pictures != null"
-          rounded="circle"
-          class="picture img-responsive"
-          :src="idea.idea_pictures[0].url"
-          alt="Circle image"
-        ></b-img>
-        <div class="leftModalContent">
-          <p v-if="idea.challenge != null">
-            <b>Reto: </b>
-            {{idea.challenge.title}}
-          </p>
-          <p>
-            {{idea.votes}} voto(s)
-          </p>
-          <p>
-            <router-link to="/comments">{{idea.comments}} comentario(s)</router-link>
-          </p>
-          <p v-if="idea.user != null">
-            <b>Por:</b>
-            {{upCase(getName(idea.user.name, idea.user.lastname))}}
-          </p>
-          <p align="justify">
-            <b>Descripción:</b><br>
-            {{idea.description}}
-          </p>
-        </div> 
-      </div>
-    </b-modal>
     <Alert ref="alert"></Alert >
   </section>
 </template>
@@ -87,9 +57,9 @@ export default {
   },
   data() {
     return {
-      ideas: [],
-      idea: {},
-      ideaParam: '',
+      comments: [],
+      comment: {},
+      commentsParam: '',
 
       // users: [],
       search: "",
@@ -109,12 +79,12 @@ export default {
         return "https://via.placeholder.com/150";
       }
     },
-    getIdeas() {
-      if (this.ideaParam != 'all') this.$router.push("/ideas/all")
-      api.ideas
+    getComments() {
+      if (this.commentsParam != 'all') this.$router.push("/comments/all")
+      api.comments
         .indexAll()
         .then(response => {
-          this.ideas = response.data;
+          this.comments = response.data;
         })
         .catch(err => {
           console.log(err.response);
@@ -122,12 +92,12 @@ export default {
         });
     },
     pagination() {
-      return this.page * this.size < this.ideas.length;
+      return this.page * this.size < this.comments.length;
     },
-    deleteIdea(idea) {
+    deleteComment(comment) {
       this.$snotify.confirm(
-        "¿Estas seguro que quieres eliminar esta idea?",
-        "Eliminar idea",
+        "¿Estas seguro que quieres eliminar este comentario?",
+        "Eliminar comentario",
         {
           timeout: 2000,
           showProgressBar: true,
@@ -137,9 +107,9 @@ export default {
             {
               text: "Borrar",
               action: () => {
-                api.ideas.delete(idea.id).then(response => {
-                  this.getIdeas();
-                  this.$snotify.success("Idea eliminado", "Éxito", {
+                api.comments.delete(comment.id).then(response => {
+                  this.getComments();
+                  this.$snotify.success("Comentario eliminado", "Éxito", {
                     timeout: 2000,
                     showProgressBar: false,
                     closeOnClick: true,
@@ -156,45 +126,32 @@ export default {
         }
       );
     },
-    blockUser(id) {
-      console.log("Usuario bloqueado");
-    },
     filter() {
       var list = [];
       if (this.search != "" && this.search != null) {
         var here = this;
-        list = here.ideas.filter(function(idea) {
+        list = here.comments.filter(function(comment) {
           return (
-            idea.title.toLowerCase().includes(here.search.toLowerCase())
-
-
-            // here
-            //   .getName(user.name, user.lastname)
-            //   .includes(here.search.toLowerCase()) ||
-            // user.cc.includes(here.search.toLowerCase()) ||
-            // user.email.includes(here.search.toLowerCase())
+            comment.user_name.toLowerCase().includes(here.search.toLowerCase()) ||
+            comment.description.toLowerCase().includes(here.search.toLowerCase())
           );
         });
       } else {
-        list = this.ideas;
+        list = this.comments;
       }
       return list.slice(0, this.page * this.size);
     },
     nextPage() {
       this.page = this.page + 1;
     },
-    showIdea(idea) {
-      this.idea = idea;
-      this.$bvModal.show("showIdea");
-    },
     upCase(str) {
       return api.utils.upcase(str);
     },
-    getChallengeIdeas(challengeID) {
-      api.ideas
+    getChallengecomments(challengeID) {
+      api.comments
         .indexChallenge(challengeID)
         .then(response => {
-          this.ideas = response.data;
+          this.comments = response.data;
         })
         .catch(err => {
           console.log(err.response);
@@ -203,9 +160,10 @@ export default {
     }
   },
   created() {
-    this.ideaParam = this.$route.params.ideaParam;
-    if (this.ideaParam == 'all') this.getIdeas();
-    else this.getChallengeIdeas(this.ideaParam);
+    this.commentsParam = this.$route.params.commentsParam;
+    if (this.commentsParam == 'all') this.getComments();
+    else this.getIdeaComments(this.commentsParam);
+    // else this.getChallengecomments(this.commentsParam);
   }
 };
 </script>
@@ -259,11 +217,6 @@ export default {
       width: 50px;
       background-color: #c7161c;
       color: white;
-    }
-    .block {
-      width: 50px;
-      background-color: transparent;
-      color: #6a6a6a;
     }
     .avatar {
       width: 34px;

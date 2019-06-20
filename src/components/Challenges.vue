@@ -12,9 +12,15 @@
           v-model="search"
         >
       </div>
-      <router-link tag="b-button" class="button btnStyle" to="/add_edit_challenge/new">
+      <router-link v-if="currentStage.number == 0" tag="b-button" class="button btnStyle" to="/add_edit_challenge/new">
         <font-awesome-icon icon="plus"/>   Agregar
       </router-link>
+      <b-row>
+        <b-col align="center">
+          <br>
+          <b v-if="currentStage.number != 0">Etapa {{currentStage.number}}: En esta etapa no se pueden crear, modificar ni eliminar retos.</b>
+        </b-col>
+      </b-row>
     </div>
     <div class="main-container container-fluid listStyle">
       <b-button-group v-for="challenge in filter()" :key="challenge.id" class="list-item">
@@ -28,7 +34,7 @@
           {{upCase(challenge.title)}}
         </router-link>
 
-        <b-button class="option" @click="deleteChallenge(challenge.id)">
+        <b-button v-if="currentStage.number == 0" class="option" @click="deleteChallenge(challenge.id)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
@@ -52,10 +58,11 @@ export default {
     return {
       challenges: [],
       challenge: {},
+      currentStage: '',
 
-      users: [],
+      // users: [],
       search: "",
-      user: {},
+      // user: {},
       page: 1,
       size: 10
     };
@@ -115,13 +122,8 @@ export default {
               text: "Borrar",
               action: () => {
                 api.challenges.delete(challengeID).then(response => {
+                  this.$refs.alert.success('Reto eliminado.')
                   this.getChallenges();
-                  this.$snotify.success("Reto eliminado", "Éxito", {
-                    timeout: 2000,
-                    showProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true
-                  });
                 }).catch((err) => {
                   console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
@@ -136,6 +138,16 @@ export default {
   },
   created() {
     this.getChallenges();
+
+    api.stages
+    .getCurrent()
+    .then((response) => {
+      this.currentStage = response.data
+    })
+    .catch((err) => {
+      console.log(err)
+      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+    })
   }
 };
 </script>
@@ -157,7 +169,7 @@ export default {
   z-index: 100;
   background-color: white;
   width: 100vw !important;
-  padding-bottom: 30px;
+  padding-bottom: 5px;
   padding-top: 90px;
   padding-left: 15px;
   padding-right: 15px;
@@ -169,7 +181,8 @@ export default {
   }
 }
 .main-container {
-  padding-top: 330px;
+  padding-top: 340px;
+  padding-bottom: 15px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;

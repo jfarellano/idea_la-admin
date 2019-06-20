@@ -46,6 +46,9 @@ export default {
     indexAll: function(){
       return r.get(SERVER_URL + '/all_ideas', getHeaders())
     },
+    indexChallenge: function(challengeID) {
+      return r.get(SERVER_URL + '/challenges/' + challengeID + '/ideas', getHeaders())
+    },
     delete: function(ideaID) {
       return r.delete(SERVER_URL + '/ideas/' + ideaID, getHeaders())
     },
@@ -75,6 +78,11 @@ export default {
     },
     postComment: function(ideaID, body) {
       return r.post(SERVER_URL + '/ideas/' + ideaID + '/comments', body, getHeaders())
+    }
+  },
+  comments: {
+    indexAll: function() {
+      return r.get(SERVER_URL + '/all_comments')
     },
   },
   myProfile: {
@@ -83,14 +91,20 @@ export default {
     }
   },
   user: {
-    create: function(body){
+    create: function(body) {
       return r.post(SERVER_URL + '/users', body)
     },
-    get: function(){
+    get: function() {
       return r.get(SERVER_URL + '/users', getHeaders())
     },
-    delete: function(id){
+    delete: function(id) {
       return r.delete(SERVER_URL + '/users/' + id, getHeaders())
+    },
+    block: function(id) {
+      return r.put(SERVER_URL + '/users/' + id + '/block', {}, getHeaders())
+    },
+    unblock: function(id) {
+      return r.put(SERVER_URL + '/users/' + id + '/unblock', {}, getHeaders())
     }
   },
   stages: {
@@ -98,7 +112,7 @@ export default {
       return r.get(SERVER_URL + '/current_stage')
     },
     setNext: function(){
-      return r.put(SERVER_URL + '/next_stage', getHeaders())
+      return r.put(SERVER_URL + '/next_stage', {}, getHeaders())
     }
   }
 }
