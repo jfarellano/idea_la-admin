@@ -4,9 +4,51 @@
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Etapas</h1>
-      <b-col align="center">
-        
+      <b-col align="center" class="main-container">
+        <h2>Etapa actual: {{currentState.number}}</h2>
+        <b-row align="left">
+          <p>Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. Descripcion de la etapa actual. </p>
+        </b-row>
+        <b-row>
+          <b-col align="center">
+            <div v-if="currentState.number != 4">
+              <button
+                type="button"
+                class="btn btn-primary btn-lg btnStyle"
+                @click="showNextStage()"
+              >Siguiente Etapa
+              </button>
+            </div>
+            <div v-else>
+              <h4>Convocatoria finalizada</h4>
+            </div>
+          </b-col>
+        </b-row>
       </b-col>
+      <b-modal id="showNextStage" title="Siguiente Etapa" hide-footer>
+        <div class="modal-container container-fluid">
+          <h3>Etapa 1</h3>
+          <p>Descripcion de la siguiente etapa. Descripcion de la siguiente etapa. Descripcion de la siguiente etapa. Descripcion de la siguiente etapa. </p>
+          <br>
+          <b>ATENCIÓN:</b><br>
+          <b>Los cambios son irreversibles luego de pasar a la siguiente etapa.</b><br>
+          <b>En caso de estar seguro presione SI. En caso contrario presione NO.</b>
+          <b-col align="center">
+            <button
+              type="button"
+              class="btn btn-primary btn-lg btnStyle btnModal"
+              @click="confirmNextState()"
+            >SI
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-lg btnModalNo"
+              @click="cancelNextStage()"
+            >NO
+            </button>
+          </b-col>
+        </div>
+      </b-modal>
     </div>
     <Alert ref="alert"></Alert >
   </section>
@@ -25,129 +67,64 @@ export default {
   },
   data() {
     return {
-      users: [],
-      search: "",
-      user: {},
-      page: 1,
-      size: 10
+      currentState: {}
     };
   },
   methods: {
-    getName(name, last) {
-      return name + " " + last;
+    showNextStage(){
+      this.$bvModal.show("showNextStage");
     },
-    getImage(picture) {
-      if (picture != null) {
-        return picture.url;
-      } else {
-        return "https://via.placeholder.com/150";
-      }
+    cancelNextStage(){
+      this.$bvModal.hide("showNextStage");
     },
-    getUsers() {
-      api.user
-        .get()
-        .then(response => {
-          this.users = response.data;
-        })
-        .catch(err => {
-          console.log(err.response);
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-        });
-    },
-    pagination() {
-      return this.page * this.size < this.users.length;
-    },
-    deleteUser(user) {
-      this.$snotify.confirm(
-        "¿Estas seguro que quieres eliminar a " +
-          this.upCase(this.getName(user.name, user.lastname)) + "?",
-        "Eliminar usuario",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.user.delete(user.id).then(response => {
-                  this.getUsers();
-                  this.$snotify.success("Usuario eliminado", "Exito", {
-                    timeout: 2000,
-                    showProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true
-                  });
-                }).catch((err) => {
-                  console.log(err)
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
-      );
-    },
-    blockUser(id) {
-      console.log("Usuario bloqueado");
-    },
-    filter() {
-      var list = [];
-      if (this.search != "" && this.search != null) {
-        var here = this;
-        list = here.users.filter(function(user) {
-          return (
-            here
-              .getName(user.name, user.lastname)
-              .includes(here.search.toLowerCase()) ||
-            user.cc.includes(here.search.toLowerCase()) ||
-            user.email.includes(here.search.toLowerCase())
-          );
-        });
-      } else {
-        list = this.users;
-      }
-      return list.slice(0, this.page * this.size);
-    },
-    nextPage() {
-      this.page = this.page + 1;
-    },
-    showUser(user) {
-      this.user = user;
-      this.$bvModal.show("showUser");
-    },
-    getGender(gender) {
-      switch (gender) {
-        case "male":
-          return "Masculino";
-          break;
-        case "female":
-          return "Femenino";
-          break;
-        case "other":
-          return "Otro";
-        case "i_prefer_not_to_say":
-          return "Prefiero no decir";
-          break;
-
-        default:
-          return "";
-          break;
-      }
-    },
-    upCase(str) {
-      return api.utils.upcase(str);
+    confirmNextStage(){
+      api.stages
+      .setNext()
+      .then(() => {
+        this.$router.go()
+      })
+      .catch((err) => {
+        console.log(err)
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
     }
   },
   created() {
-    this.getUsers();
+    console.log('entra created')
+    api.stages
+    .getCurrent()
+    .then((response) => {
+      console.log('entra')
+      this.currentState = response.data
+    })
+    .catch((err) => {
+      console.log(err)
+      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+    })
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.btnModalNo {
+  height: 50px;
+  border-radius: 5px;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  border-color: #0E2469;
+  background-color: white;
+  color: #0E2469;
+  width: 100px;
+  margin: 15px;
+}
+.btnStyle {
+  height: 50px;
+  border-radius: 5px;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  border-color: #0E2469;
+  background-color: #0E2469;
+}
 .fixed {
   position: fixed;
   z-index: 100;
@@ -157,66 +134,31 @@ export default {
   padding-top: 90px;
   padding-left: 15px;
   padding-right: 15px;
-  .input-group {
-    width: calc(100vw - 30px) !important;
-  }
   .btnBack {
     margin-top: 10px;
   }
 }
 .main-container {
-  padding-top: 260px;
-  .list-item {
-    width: 100%;
-    border: 1px solid #0e2469;
-    border-radius: 5px;
-    color: #0e2469;
-    margin-top: 7px;
-    .user {
-      width: 100%;
-      background-color: transparent;
-      color: #0e2469;
-      flex: 0 1 auto;
-      text-align: left;
-    }
-    .option {
-      width: 50px;
-      background-color: #c7161c;
-      color: white;
-    }
-    .block {
-      width: 50px;
-      background-color: transparent;
-      color: #6a6a6a;
-    }
-    .avatar {
-      width: 34px;
-      height: 34px;
-    }
-    .extra {
-      color: #6a6a6a;
-      font-size: 12px;
-    }
-  }
-}
-.next {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #0e2469;
-  border-radius: 5px;
-  color: #0e2469;
-  margin: 10px 0px;
+  padding-right: 350px;
+  padding-left: 350px;
 }
 .modal-container {
-  text-align: center;
-  .picture {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 12px;
+  text-align: left;
+  .btnModal {
+    margin: 15px;
+    width: 100px;
   }
-  p {
-    color: #0e2469;
+  b {
+    color: #c7161c;
   }
+  // .picture {
+  //   width: 150px;
+  //   height: 150px;
+  //   margin-bottom: 12px;
+  // }
+  // p {
+  //   color: #0e2469;
+  // }
 }
 .modal-title {
   color: #0e2469;

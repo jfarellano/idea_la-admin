@@ -92,5 +92,13 @@ export default {
     delete: function(id){
       return r.delete(SERVER_URL + '/users/' + id, getHeaders())
     }
+  },
+  stages: {
+    getCurrent: function(){
+      return r.get(SERVER_URL + '/current_stage')
+    },
+    setNext: function(){
+      return r.put(SERVER_URL + '/next_stage', getHeaders())
+    }
   }
 }
