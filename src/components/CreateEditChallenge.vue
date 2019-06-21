@@ -6,10 +6,11 @@
       <h1 v-else>Editar Reto</h1>
       <br>
       <b-row class="margins-content">
-        <b-col cols="4" align="center">
+        <b-col cols="5" align="center" v-if="currentStage.number == 0">
           <b-button
             @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
             class="loadBtn"
+            :disabled="validStage()"
           >Carga tu imagen</b-button>
           <b-form-file
             v-model="challenge.newPicture"
@@ -26,7 +27,14 @@
             class="incorrectInput"
           >La imagen es muy grande, el maximo son 2MB</p>
         </b-col>
-        <b-col cols="8">
+        <b-col cols="5" v-else>
+          <b-img
+            class="avatar img-responsive"
+            :src="challenge.challenge_pictures[0].url"
+            alt="Circle image"
+          ></b-img>
+        </b-col>
+        <b-col cols="7">
           <!-- PENDIENTE ROUTER LINK A IDEAS DEL RETO YA FILTRADAS -->
           <!-- <router-link class="challenge" :to='"/add_edit_challenge/" + challenge.id'>{{challenge.ideas}} idea(s) publicada(s)</router-link> -->
           <div v-if="challengeID != 'new'">
@@ -45,10 +53,16 @@
               v-validate="'alpha_spaces|max:50|required'"
               :class="{'has-error': errors.has('name_invalid')}"
               name="name"
+              :disabled="validStage()"
             >
           </div>
           <h5>Descripción breve</h5>
-          <textarea cols="101" class="form-control" v-model="challenge.short_description">
+          <textarea 
+            cols="101" 
+            class="form-control short-description" 
+            v-model="challenge.short_description" 
+            :disabled="validStage()"
+          >
           </textarea>
         </b-col>
       </b-row>
@@ -56,7 +70,12 @@
         <b-col>
           <br>
           <h5>Descripción detallada</h5>
-          <textarea cols="101" class="form-control longDescription" v-model="challenge.description">
+          <textarea 
+            cols="101" 
+            class="form-control longDescription" 
+            v-model="challenge.description"
+            :disabled="validStage()"  
+          >
           </textarea>
         </b-col>
       </b-row>
@@ -69,6 +88,7 @@
               :disabled='allValidInputs()'
             > -->
             <button
+              v-if="currentStage.number == 0"
               type="button"
               class="btn btn-primary btn-lg btnStyle btnContinueStyle"
               v-on:click.prevent="acceptChallenge()"
@@ -78,10 +98,17 @@
             <p v-else>Guardar</p>
             </button>
             <router-link
+              v-if="currentStage.number == 0"
               to="/challenges" 
               tag="button"
               class="btn btn-primary btn-lg btnStyle btnCancelStyle"
             >Cancelar</router-link>
+            <router-link
+              v-else
+              to="/challenges" 
+              tag="button"
+              class="btn btn-primary btn-lg btnStyle btnCancelStyle"
+            >Volver</router-link>
           </b-col>
       </b-row>
       <b-row>
@@ -190,6 +217,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.short-description {
+  max-height: 100px;
+  min-height: 50px;
+}
+.img-responsive {
+  max-height: 100%;
+  max-width: 100%;
+}
 .selectedImage {
   color: #6a6a6a;
   font-size: 12px;
@@ -220,6 +255,8 @@ export default {
 }
 .longDescription {
   height: 130px;
+  max-height: 200px;
+  min-height: 50px;
 }
 .inputStyles {
   width: 100%;

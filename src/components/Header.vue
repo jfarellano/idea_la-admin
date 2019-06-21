@@ -125,7 +125,7 @@ export default {
   color: white;
   .navbar-brand {
     img {
-      height: 44px;
+      height: 70px;
       margin-left: 6%;
     }
   }

@@ -9,7 +9,7 @@
         type="button"
         class="btn btn-primary btnStyle"
         v-if="ideaParam != 'all'"
-        @click="getIdeas()"
+        @click="goToAllIdeas()"
       >Mostrar Todas
       </button>
       <div class="input-group">
@@ -31,7 +31,7 @@
             alt="Circle image"
           ></b-img>
           {{idea.title}}
-          <span class="extra">{{idea.votes}} voto(s)</span>
+          <span class="extra" v-if="currentStage.number == 3">{{idea.votes}} voto(s)</span>
         </b-button>
         <b-button class="option" @click="deleteIdea(idea)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
@@ -56,9 +56,10 @@
           <p>
             {{idea.votes}} voto(s)
           </p>
-          <p>
-            <router-link to="/comments">{{idea.comments}} comentario(s)</router-link>
-          </p>
+            <p v-if="idea.comments > 0">
+              <router-link :to='"/comments/" + idea.id'>{{idea.comments}} comentario(s)</router-link>  
+            </p>
+            <p v-else>{{idea.comments}} comentario(s)</p>
           <p v-if="idea.user != null">
             <b>Por:</b>
             {{upCase(getName(idea.user.name, idea.user.lastname))}}
@@ -90,15 +91,17 @@ export default {
       ideas: [],
       idea: {},
       ideaParam: '',
-
-      // users: [],
+      currentStage: {},
       search: "",
-      // user: {},
       page: 1,
       size: 10
     };
   },
   methods: {
+    goToAllIdeas(){
+      this.$router.push('/ideas/all')
+      this.$router.go()
+    },
     getName(name, last) {
       return name + " " + last;
     },
@@ -110,7 +113,7 @@ export default {
       }
     },
     getIdeas() {
-      if (this.ideaParam != 'all') this.$router.push("/ideas/all")
+      // if (this.ideaParam != 'all') this.$router.push("/ideas/all")
       api.ideas
         .indexAll()
         .then(response => {
@@ -156,9 +159,6 @@ export default {
         }
       );
     },
-    blockUser(id) {
-      console.log("Usuario bloqueado");
-    },
     filter() {
       var list = [];
       if (this.search != "" && this.search != null) {
@@ -166,13 +166,6 @@ export default {
         list = here.ideas.filter(function(idea) {
           return (
             idea.title.toLowerCase().includes(here.search.toLowerCase())
-
-
-            // here
-            //   .getName(user.name, user.lastname)
-            //   .includes(here.search.toLowerCase()) ||
-            // user.cc.includes(here.search.toLowerCase()) ||
-            // user.email.includes(here.search.toLowerCase())
           );
         });
       } else {
@@ -200,12 +193,25 @@ export default {
           console.log(err.response);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
+    },
+    getCurrentStage(){
+      api.stages
+      .getCurrent()
+      .then((response) => {
+        this.currentStage = response.data
+      })
+      .catch((err) => {
+        console.log(err)
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
     }
   },
   created() {
     this.ideaParam = this.$route.params.ideaParam;
     if (this.ideaParam == 'all') this.getIdeas();
     else this.getChallengeIdeas(this.ideaParam);
+
+    this.getCurrentStage();
   }
 };
 </script>
@@ -241,7 +247,7 @@ export default {
   }
 }
 .main-container {
-  padding-top: 320px;
+  padding-top: 330px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;

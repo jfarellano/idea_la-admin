@@ -20,8 +20,12 @@
             rounded="circle"
             class="avatar img-responsive"
             :src="getImage(user.picture)"
-            alt="Circle image"
           ></b-img>
+          <!-- <b-img
+            rounded="circle"
+            class="avatar img-responsive"
+            src="https://via.placeholder.com/150"
+          ></b-img> -->
           {{upCase(getName(user.name, user.lastname))}}
           <span class="extra">{{user.email}} (C.C. {{user.cc}})</span>
         </b-button>
@@ -101,10 +105,10 @@ export default {
       return name + " " + last;
     },
     getImage(picture) {
-      if (picture != null) {
+      if (typeof picture == 'object') {
         return picture.url;
       } else {
-        return "https://via.placeholder.com/150";
+        return picture;
       }
     },
     getUsers() {
@@ -253,6 +257,7 @@ export default {
 }
 .main-container {
   padding-top: 260px;
+  padding-bottom: 15px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;

@@ -81,8 +81,14 @@ export default {
     }
   },
   comments: {
-    indexAll: function() {
-      return r.get(SERVER_URL + '/all_comments')
+    getAll: function() {
+      return r.get(SERVER_URL + '/all_comments', getHeaders())
+    },
+    getFromIdea: function(id) {
+      return r.get(SERVER_URL + '/ideas/' + id + '/comments')
+    },
+    delete: function(id) {
+      return r.delete(SERVER_URL + '/comments/' + id, getHeaders())
     },
   },
   myProfile: {

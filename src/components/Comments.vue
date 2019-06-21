@@ -9,8 +9,8 @@
         type="button"
         class="btn btn-primary btnStyle"
         v-if="commentsParam != 'all'"
-        @click="getComments()"
-      >Mostrar Todas
+        @click="goToAllComments()"
+        >Mostrar Todos
       </button>
       <div class="input-group">
         <input
@@ -27,14 +27,13 @@
           <b-img
             rounded="circle"
             class="avatar img-responsive"
-            :src="getImage(comment.user_profile_picture.url)"
+            :src="getImage(comment.user_profile_picture)"
             alt="Circle image"
           ></b-img>
           {{upCase(comment.user_name)}}
-          <br>  
           <span class="extra">{{comment.description}}</span>
         </div>
-        <b-button class="option" @click="deleteComment(idea)">
+        <b-button class="option" @click="deleteComment(comment)">
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
@@ -58,36 +57,33 @@ export default {
   data() {
     return {
       comments: [],
-      comment: {},
       commentsParam: '',
-
-      // users: [],
+      currentStage: {},
       search: "",
-      // user: {},
       page: 1,
       size: 10
     };
   },
   methods: {
+    goToAllComments(){
+      this.$router.push('/comments/all')
+      this.$router.go()
+    },
     getName(name, last) {
       return name + " " + last;
     },
     getImage(picture) {
-      if (picture != null) {
-        return picture.url;
-      } else {
-        return "https://via.placeholder.com/150";
-      }
+      if (typeof picture == 'object') return picture.url
+      else return picture
     },
     getComments() {
-      if (this.commentsParam != 'all') this.$router.push("/comments/all")
       api.comments
-        .indexAll()
+        .getAll()
         .then(response => {
           this.comments = response.data;
         })
         .catch(err => {
-          console.log(err.response);
+          console.log(err);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -108,13 +104,9 @@ export default {
               text: "Borrar",
               action: () => {
                 api.comments.delete(comment.id).then(response => {
-                  this.getComments();
-                  this.$snotify.success("Comentario eliminado", "Éxito", {
-                    timeout: 2000,
-                    showProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true
-                  });
+                  if (this.commentsParam == 'all') this.getComments();
+                  else this.getCommentsFromIdea(this.commentsParam);
+                  this.$refs.alert.success('Comentario eliminado.')
                 }).catch((err) => {
                   console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
@@ -147,9 +139,9 @@ export default {
     upCase(str) {
       return api.utils.upcase(str);
     },
-    getChallengecomments(challengeID) {
+    getCommentsFromIdea(ideaID) {
       api.comments
-        .indexChallenge(challengeID)
+        .getFromIdea(ideaID)
         .then(response => {
           this.comments = response.data;
         })
@@ -157,13 +149,25 @@ export default {
           console.log(err.response);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
+    },
+    getCurrentStage(){
+      api.stages
+      .getCurrent()
+      .then((response) => {
+        this.currentStage = response.data
+      })
+      .catch((err) => {
+        console.log(err)
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
     }
   },
   created() {
     this.commentsParam = this.$route.params.commentsParam;
     if (this.commentsParam == 'all') this.getComments();
-    else this.getIdeaComments(this.commentsParam);
-    // else this.getChallengecomments(this.commentsParam);
+    else this.getCommentsFromIdea(this.commentsParam);
+
+    this.getCurrentStage();
   }
 };
 </script>
@@ -199,7 +203,7 @@ export default {
   }
 }
 .main-container {
-  padding-top: 320px;
+  padding-top: 330px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;
@@ -212,11 +216,17 @@ export default {
       color: #0e2469;
       flex: 0 1 auto;
       text-align: left;
+      padding: 5px;
     }
     .option {
       width: 50px;
       background-color: #c7161c;
       color: white;
+    }
+    .block {
+      width: 50px;
+      background-color: transparent;
+      color: #6a6a6a;
     }
     .avatar {
       width: 34px;

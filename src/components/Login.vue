@@ -99,9 +99,9 @@ export default {
               response.data.expire_at,
               response.data.is_admin
             );
-            if (response.data.user.picture != null)
+            if (typeof response.data.user.picture == 'object')
               auth.storage.setImage(response.data.user.picture.url);
-            else auth.storage.setImage("http://placehold.it/30x30");
+            else auth.storage.setImage(response.data.user.picture);
             auth.storage.set_name(
               response.data.user.name,
               response.data.user.lastname
