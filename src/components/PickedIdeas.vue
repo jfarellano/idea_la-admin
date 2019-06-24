@@ -2,28 +2,12 @@
   <section>
     <Header></Header>
     <div class="fixed">
-      <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Ideas</h1>
-      <button
-        type="button"
-        class="btn btn-primary btnStyle"
-        v-if="ideaParam != 'all'"
-        @click="goToAllIdeas()"
-        >Mostrar Todas
-      </button>
-      <!-- <router-link v-if="currentStage.number >= 2" tag="b-button" class="button btnStyle" to="/ideas/all">Ideas Seleccionadas</router-link> -->
-      <router-link v-if="test >= 2" tag="b-button" class="button btnStyle" to="/picked_ideas">Ideas Seleccionadas</router-link>
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control inputStyles"
-          placeholder="Buscar"
-          v-model="search"
-        >
-      </div>
+      <router-link tag="b-button" class="button btnBack" to="/ideas/all">Volver</router-link>
+      <h1>Ideas Seleccionadas</h1>
     </div>
     <div class="main-container container-fluid">
       <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
+        <h1>TITULO DEL CHALLENGE</h1>
         <b-button @click="showIdea(idea)" class="user">
           <b-img
             rounded="circle"
@@ -265,7 +249,6 @@ export default {
       .getCurrent()
       .then((response) => {
         this.currentStage = response.data
-        if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
       .catch((err) => {
         console.log(err)

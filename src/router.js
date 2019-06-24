@@ -9,6 +9,7 @@ import CreateEditChallenge from './components/CreateEditChallenge.vue'
 import Ideas from './components/Ideas.vue'
 import Stages from './components/Stages.vue'
 import Comments from './components/Comments.vue'
+import PickedIdeas from './components/PickedIdeas.vue'
 
 
 Vue.use(Router)
@@ -53,6 +54,11 @@ export default new Router ({
             path: '/comments/:commentsParam',
             name: 'Comments',
             component: Comments
+        },
+        {
+            path: '/picked_ideas',
+            name: 'PickedIdeas',
+            component: PickedIdeas
         },
     ]
 })

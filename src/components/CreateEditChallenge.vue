@@ -5,7 +5,7 @@
       <h1 v-if="challengeID == 'new'">Crear Reto</h1>
       <h1 v-else>Editar Reto</h1>
       <br>
-      <b-row class="margins-content">
+      <b-row class="margins-content container-fluid">
         <b-col cols="5" align="center" v-if="currentStage.number == 0">
           <b-button
             @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
@@ -29,14 +29,13 @@
         </b-col>
         <b-col cols="5" v-else>
           <b-img
+            v-if="challenge.challenge_pictures != null"
             class="avatar img-responsive"
             :src="challenge.challenge_pictures[0].url"
             alt="Circle image"
           ></b-img>
         </b-col>
         <b-col cols="7">
-          <!-- PENDIENTE ROUTER LINK A IDEAS DEL RETO YA FILTRADAS -->
-          <!-- <router-link class="challenge" :to='"/add_edit_challenge/" + challenge.id'>{{challenge.ideas}} idea(s) publicada(s)</router-link> -->
           <div v-if="challengeID != 'new'">
             <router-link v-if="challenge.ideas > 0" class="challenge" :to='"/ideas/" + challenge.id'>
               {{challenge.ideas}} idea(s) publicada(s)
@@ -81,12 +80,6 @@
       </b-row>
       <b-row class="margins-content">
         <b-col align="center">
-            <!-- <button
-              type="button"
-              class="btn btn-primary btn-lg btnStyle btnContinueStyle"
-              v-on:click.prevent="acceptChallenge()"
-              :disabled='allValidInputs()'
-            > -->
             <button
               v-if="currentStage.number == 0"
               type="button"
@@ -192,7 +185,7 @@ export default {
         api.challenges
         .create(fd)
         .then((response) => {
-          this.$refs.alert.success('Reto creado.')
+          // this.$refs.alert.success('Reto creado.')
           this.$router.push("/challenges")
         })
         .catch((err) => {
@@ -203,7 +196,7 @@ export default {
         api.challenges
         .update(fd, this.challengeID)
         .then(() => {
-          this.$refs.alert.success('Reto modificado.')
+          // this.$refs.alert.success('Reto modificado.')
           this.$router.push("/challenges")
         })
         .catch((err) => {
@@ -223,7 +216,7 @@ export default {
 }
 .img-responsive {
   max-height: 100%;
-  max-width: 100%;
+  max-width: 100%;  
 }
 .selectedImage {
   color: #6a6a6a;

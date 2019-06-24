@@ -2,7 +2,7 @@
 // Se debe eliminar el recurso de variables debido a que se puede usar este mismo
 // servicio para el manejo de variables como se muestra en este ejemplo
 const r = require('axios');
-const SERVER_URL = 'http://34.226.46.43'
+const SERVER_URL = 'http://dev.jfarellano.xyz'
 import auth from './authentication.js'
 
 function getHeaders() {
@@ -52,6 +52,9 @@ export default {
     delete: function(ideaID) {
       return r.delete(SERVER_URL + '/ideas/' + ideaID, getHeaders())
     },
+    indexPicked: function() {
+      return r.get(SERVER_URL + '/index_picked/', getHeaders())
+    },
   },
   challenge: {
     getInfo: function(challengeID) {
@@ -78,7 +81,13 @@ export default {
     },
     postComment: function(ideaID, body) {
       return r.post(SERVER_URL + '/ideas/' + ideaID + '/comments', body, getHeaders())
-    }
+    },
+    pick: function(ideaID) {
+      return r.put(SERVER_URL + '/pick_ideas/' + ideaID, {}, getHeaders())
+    },
+    unpick: function(ideaID) {
+      return r.put(SERVER_URL + '/un_pick_ideas/' + ideaID, {}, getHeaders())
+    },
   },
   comments: {
     getAll: function() {

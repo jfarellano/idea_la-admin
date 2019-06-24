@@ -141,12 +141,7 @@ export default {
               action: () => {
                 api.user.delete(user.id).then(response => {
                   this.getUsers();
-                  this.$snotify.success("Usuario eliminado", "Exito", {
-                    timeout: 2000,
-                    showProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true
-                  });
+                  this.$refs.alert.success('Usuario eliminado.')
                 }).catch((err) => {
                   console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
