@@ -1,0 +1,13 @@
+cp $1 temp
+rm $1
+sed 's/dev/prod/' temp > $1
+rm temp
+
+npm run build
+
+aws s3 cp dist/ s3://admin-prod.imagina.tu.ciuda --cache-control max-age=86400 --recursive --include "*"
+
+cp $1 temp
+rm $1
+sed 's/prod/dev/' temp > $1
+rm temp

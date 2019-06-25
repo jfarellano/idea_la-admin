@@ -1,0 +1,3 @@
+npm run build
+
+aws s3 cp dist/ s3://admin.imagina.tu.ciuda --cache-control max-age=86400 --recursive --include "*"
