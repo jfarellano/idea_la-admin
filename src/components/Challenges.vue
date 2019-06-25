@@ -70,7 +70,7 @@ export default {
   methods: {
     getChallenges() {
       api.challenges
-        .indexAll()
+        .index()
         .then(response => {
           this.challenges = response.data;
         })
@@ -85,8 +85,7 @@ export default {
         var here = this;
         list = here.challenges.filter(function(challenge) {
           return (
-            challenge.title.includes(here.search.toLowerCase()) ||
-            challenge.description.includes(here.search.toLowerCase())
+            challenge.title.toLowerCase().includes(here.search.toLowerCase())
           );
         });
       } else {

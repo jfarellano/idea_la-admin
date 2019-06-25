@@ -155,6 +155,7 @@ export default {
       .getCurrent()
       .then((response) => {
         this.currentStage = response.data
+        if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
       .catch((err) => {
         console.log(err)
