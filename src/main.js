@@ -14,9 +14,14 @@ import 'vue-snotify/styles/simple.css';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import VueApexCharts from 'vue-apexcharts'
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('apexchart', VueApexCharts)
+
 library.add(fas)
+
+Vue.use(VueApexCharts)
 Vue.use(Snotify)
 Vue.use(VeeValidate);
 Vue.use(BootstrapVue)

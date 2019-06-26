@@ -10,55 +10,60 @@ import Ideas from './components/Ideas.vue'
 import Stages from './components/Stages.vue'
 import Comments from './components/Comments.vue'
 import PickedIdeas from './components/PickedIdeas.vue'
-
+import PickedIdeasResults from './components/PickedIdeasResults.vue'
 
 Vue.use(Router)
 export default new Router ({
-    routes: [
-        {
-            path: '/',
-            name: 'Login',
-            component: Login
-        },
-        {
-            path: '/dashboard',
-            name: 'Dashboard',
-            component: Dashboard
-        },
-        {
-            path: '/users',
-            name: 'Users',
-            component: Users
-        },
-        {
-            path: '/challenges',
-            name: 'Challenges',
-            component: Challenges
-        },
-        {
-            path: '/add_edit_challenge/:challengeID',
-            name: 'CreateEditChallenge',
-            component: CreateEditChallenge
-        },
-        {
-            path: '/ideas/:ideaParam',
-            name: 'Ideas',
-            component: Ideas
-        },
-        {
-            path: '/stages',
-            name: 'Stages',
-            component: Stages
-        },
-        {
-            path: '/comments/:commentsParam',
-            name: 'Comments',
-            component: Comments
-        },
-        {
-            path: '/picked_ideas',
-            name: 'PickedIdeas',
-            component: PickedIdeas
-        },
-    ]
+  routes: [
+    {
+      path: '/',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: Dashboard
+    },
+    {
+      path: '/users',
+      name: 'Users',
+      component: Users
+    },
+    {
+      path: '/challenges',
+      name: 'Challenges',
+      component: Challenges
+    },
+    {
+      path: '/add_edit_challenge/:challengeID',
+      name: 'CreateEditChallenge',
+      component: CreateEditChallenge
+    },
+    {
+      path: '/ideas/:ideaParam',
+      name: 'Ideas',
+      component: Ideas
+    },
+    {
+      path: '/stages',
+      name: 'Stages',
+      component: Stages
+    },
+    {
+      path: '/comments/:commentsParam',
+      name: 'Comments',
+      component: Comments
+    },
+    {
+      path: '/picked_ideas',
+      name: 'PickedIdeas',
+      component: PickedIdeas
+    },
+    {
+      path: '/picked_ideas_results',
+      name: 'PickedIdeasResults',
+      component: PickedIdeasResults
+    },
+  ]
 })

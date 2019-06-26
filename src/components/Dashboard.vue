@@ -18,7 +18,7 @@
       <router-link v-if="showButton('stages')" tag="b-button" class="button btnStyle" to="/stages">
         <font-awesome-icon icon="project-diagram"/> Etapas
       </router-link>
-      <router-link v-if="showButton('votes')" tag="b-button" class="button btnStyle" to="/stages">
+      <router-link v-if="showButton('votes')" tag="b-button" class="button btnStyle" to="/picked_ideas_results">
         <font-awesome-icon icon="vote-yea"/> Votaciones
       </router-link>
       <router-link v-if="showButton('surveys')" tag="b-button" class="button btnStyle" to="/stages">

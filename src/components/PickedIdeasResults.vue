@@ -2,33 +2,54 @@
   <section>
     <Header></Header>
     <div class="fixed">
-      <router-link tag="b-button" class="button btnBack" to="/ideas/all">Volver</router-link>
-      <h1>Ideas Seleccionadas</h1>
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control inputStyles"
-          placeholder="Buscar"
-          v-model="search"
-        >
-      </div>
-      <b-form-select
-        class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
-        :value="null"
-        id="inline-form-custom-select-pref"
-        v-model="challengeFilter"
-        name="challenge"
-        @change="filterByChallenge(challengeFilter)"
-      >
-        <option
-          slot="first"
-          v-for="(challenge, index) in challenges"
-          v-bind:value="challenge.id"
-          :key="index"
-        >{{ challenge.title }}</option>
-      </b-form-select>
+      <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
+      <h1>Resultados de Votaciones</h1>
+      <b-row>
+        <b-col align="center" class="chart-col">
+          <h3>Resultados de Ideas por Reto</h3>
+          <b-form-select
+            class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
+            :value="null"
+            id="inline-form-custom-select-pref"
+            v-model="challengeFilter"
+            name="challenge"
+            @change="filterByChallenge(challengeFilter)"
+          >
+            <option
+              slot="first"
+              v-for="(challenge, index) in challenges"
+              v-bind:value="challenge.id"
+              :key="index"
+            >{{ challenge.title }}</option>
+          </b-form-select>
+
+          <apexchart type=pie width=380 :options="chartOptions" :series="series" />
+        </b-col>
+        <b-col align="center" class="chart-col">
+          <h3>Resultados de Ideas por Reto</h3>
+          <b-form-select
+            class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
+            :value="null"
+            id="inline-form-custom-select-pref"
+            v-model="challengeFilter"
+            name="challenge"
+            @change="filterByChallenge(challengeFilter)"
+          >
+            <option
+              slot="first"
+              v-for="(challenge, index) in challenges"
+              v-bind:value="challenge.id"
+              :key="index"
+            >{{ challenge.title }}</option>
+          </b-form-select>
+
+          <apexchart type=pie width=380 :options="chartOptions" :series="series" />
+        </b-col>
+      </b-row>
+
     </div>
-    <div class="main-container container-fluid">
+    
+    <!-- <div class="main-container container-fluid">
       <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
         <b-button @click="showIdea(idea)" class="user">
           <b-img
@@ -49,7 +70,7 @@
           </b-button>
         </div>
       </b-button-group>
-    </div>
+    </div> -->
     <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     <b-modal id="showIdea" :title="idea.title" hide-footer>
       <div class="modal-container container-fluid">
@@ -100,6 +121,23 @@ export default {
   },
   data() {
     return {
+      series: [44, 55, 13, 43, 0],
+      chartOptions: {
+        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      },
+
+
       challengeFilter: '',
       challenges: [],
       ideas: [],
@@ -311,6 +349,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.chart-col {
+  padding-right: 15px;
+  padding-left: 15px;
+}
 .dropdown-challenges {
   margin-top: 10px;
 }
