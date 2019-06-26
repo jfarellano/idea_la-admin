@@ -11,8 +11,8 @@
         @click="goToAllIdeas()"
         >Mostrar Todas
       </button>
-      <!-- <router-link v-if="currentStage.number >= 2" tag="b-button" class="button btnStyle" to="/ideas/all">Ideas Seleccionadas</router-link> -->
-      <router-link v-if="test >= 2" tag="b-button" class="button btnStyle" to="/picked_ideas">Ideas Seleccionadas</router-link>
+      <router-link v-if="currentStage.number >= 2" tag="b-button" class="button btnStyle" to="/picked_ideas">Ideas Seleccionadas</router-link>
+      <!-- <router-link v-if="test >= 2" tag="b-button" class="button btnStyle" to="/picked_ideas">Ideas Seleccionadas</router-link> -->
       <div class="input-group">
         <input
           type="text"
@@ -32,7 +32,6 @@
             alt="Circle image"
           ></b-img>
           {{idea.title}}
-          <span class="extra" v-if="currentStage.number == 3">{{idea.votes}} voto(s)</span>
         </b-button>
         <div v-if="currentStage.number == 2">
           <b-button v-if="!idea.picked" class="picker-icon" @click="pickIdea(idea.id)">
@@ -61,9 +60,6 @@
           <p v-if="idea.challenge != null">
             <b>Reto: </b>
             {{idea.challenge.title}}
-          </p>
-          <p>
-            {{idea.votes}} voto(s)
           </p>
             <p v-if="idea.comments > 0">
               <router-link :to='"/comments/" + idea.id'>{{idea.comments}} comentario(s)</router-link>  
@@ -321,6 +317,7 @@ export default {
 }
 .main-container {
   padding-top: 330px;
+  margin-bottom: 15px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;

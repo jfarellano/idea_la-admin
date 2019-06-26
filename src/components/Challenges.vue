@@ -70,14 +70,14 @@ export default {
   methods: {
     getChallenges() {
       api.challenges
-        .index()
-        .then(response => {
-          this.challenges = response.data;
-        })
-        .catch(err => {
-          console.log(err.response);
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-        });
+      .index()
+      .then(response => {
+        this.challenges = response.data;
+      })
+      .catch(err => {
+        console.log(err.response);
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      });
     },
     filter() {
       var list = [];

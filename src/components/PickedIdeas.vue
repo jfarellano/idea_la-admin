@@ -4,34 +4,58 @@
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/ideas/all">Volver</router-link>
       <h1>Ideas Seleccionadas</h1>
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control inputStyles"
+          placeholder="Buscar"
+          v-model="search"
+        >
+      </div>
+      <b-form-select
+        class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
+        :value="null"
+        id="inline-form-custom-select-pref"
+        v-model="challengeFilter"
+        name="challenge"
+        @change="filterByChallenge(challengeFilter)"
+      >
+        <option
+          slot="first"
+          v-for="(challenge, index) in challenges"
+          v-bind:value="challenge.id"
+          :key="index"
+        >{{ challenge.title }}</option>
+      </b-form-select>
     </div>
     <div class="main-container container-fluid">
-      <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
-        <h1>TITULO DEL CHALLENGE</h1>
-        <b-button @click="showIdea(idea)" class="user">
-          <b-img
-            rounded="circle"
-            class="avatar img-responsive"
-            :src="idea.idea_pictures[0].url"
-            alt="Circle image"
-          ></b-img>
-          {{idea.title}}
-          <span class="extra" v-if="currentStage.number == 3">{{idea.votes}} voto(s)</span>
-        </b-button>
-        <div v-if="currentStage.number == 2">
-          <b-button v-if="!idea.picked" class="picker-icon" @click="pickIdea(idea.id)">
-            <font-awesome-icon icon="square"></font-awesome-icon>
+        <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
+          <b-button @click="showIdea(idea)" class="user">
+            <b-img
+              rounded="circle"
+              class="avatar img-responsive"
+              :src="idea.idea_pictures[0].url"
+              alt="Circle image"
+            ></b-img>
+            {{idea.title}}
+            <span class="extra">{{idea.votes}} voto(s)</span>
           </b-button>
-          <b-button v-else class="pick picker-icon" @click="unpickIdea(idea.id)">
-            <font-awesome-icon icon="check-square"></font-awesome-icon>
-          </b-button>
-        </div>
-        <b-button class="option" @click="deleteIdea(idea)">
-          <font-awesome-icon icon="trash"></font-awesome-icon>
-        </b-button>
-      </b-button-group>
+          <div v-if="currentStage.number == 2">
+            <b-button v-if="!idea.picked" class="picker-icon" @click="pickIdea(idea.id)">
+              <font-awesome-icon icon="square"></font-awesome-icon>
+            </b-button>
+            <b-button v-else class="pick picker-icon" @click="unpickIdea(idea.id)">
+              <font-awesome-icon icon="check-square"></font-awesome-icon>
+            </b-button>
+          </div>
+          <!-- <b-button class="option" @click="deleteIdea(idea)">
+            <font-awesome-icon icon="trash"></font-awesome-icon>
+          </b-button> -->
+        </b-button-group>
+      </div>
+
       <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
-    </div>
+    <!-- </div> -->
     <b-modal id="showIdea" :title="idea.title" hide-footer>
       <div class="modal-container container-fluid">
         <b-img
@@ -81,9 +105,10 @@ export default {
   },
   data() {
     return {
-      test: 2,
-
+      challengeFilter: '',
+      challenges: [],
       ideas: [],
+      ideasByChal: [],
       idea: {},
       ideaParam: '',
       currentStage: {},
@@ -93,6 +118,21 @@ export default {
     };
   },
   methods: {
+    filterByChallenge(id) {
+      if (id == 0) {
+        this.getPickedIdeas();
+      } else {
+        api.ideas
+        .indexPickedByChallenge(id)
+        .then((response) => {
+          this.ideas = response.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        })
+      }
+    },
     pickIdea(id) {
       this.$snotify.confirm(
         "¿Estás seguro que quieres seleccionar esta idea?",
@@ -109,8 +149,7 @@ export default {
                 api.idea
                 .pick(id)
                 .then((response) => {
-                  if (this.ideaParam == 'all') this.getIdeas();
-                  else this.getChallengeIdeas(this.ideaParam);
+                  this.getPickedIdeas();
                 })
                 .catch((err) => {
                   console.log(err)
@@ -139,8 +178,7 @@ export default {
                 api.idea
                 .unpick(id)
                 .then((response) => {
-                  if (this.ideaParam == 'all') this.getIdeas();
-                  else this.getChallengeIdeas(this.ideaParam);
+                  this.getPickedIdeas();
                 })
                 .catch((err) => {
                   console.log(err)
@@ -167,14 +205,14 @@ export default {
         return "https://via.placeholder.com/150";
       }
     },
-    getIdeas() {
+    getPickedIdeas() {
       api.ideas
-        .indexAll()
-        .then(response => {
+        .indexPicked()
+        .then((response) => {
           this.ideas = response.data;
         })
         .catch(err => {
-          console.log(err.response);
+          console.log(err);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -195,8 +233,7 @@ export default {
               text: "Borrar",
               action: () => {
                 api.ideas.delete(idea.id).then(response => {
-                  if (this.ideaParam == 'all') this.getIdeas();
-                  else this.getChallengeIdeas(this.ideaParam);
+                  this.getPickedIdeas();
                   this.$refs.alert.success('Idea eliminada eliminada.')
                 }).catch((err) => {
                   console.log(err)
@@ -240,7 +277,7 @@ export default {
         this.ideas = response.data;
       })
       .catch(err => {
-        console.log(err.response);
+        console.log(err);
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       });
     },
@@ -249,6 +286,7 @@ export default {
       .getCurrent()
       .then((response) => {
         this.currentStage = response.data
+        // if (this.currentStage.number < 2) this.$router.push('/ideas/all')
       })
       .catch((err) => {
         console.log(err)
@@ -257,16 +295,30 @@ export default {
     }
   },
   created() {
-    this.ideaParam = this.$route.params.ideaParam;
-    if (this.ideaParam == 'all') this.getIdeas();
-    else this.getChallengeIdeas(this.ideaParam);
-
     this.getCurrentStage();
+    this.getPickedIdeas();
+
+    api.challenges
+    .index()
+    .then(response => {
+      this.challenges = response.data;
+      this.challenges.push({
+        title: 'Todas',
+        id: 0
+      })
+    })
+    .catch(err => {
+      console.log(err);
+      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+    });
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.dropdown-challenges {
+  margin-top: 10px;
+}
 .picker-icon {
   width: 100%;
   height: 100%;
@@ -303,7 +355,7 @@ export default {
   }
 }
 .main-container {
-  padding-top: 330px;
+  padding-top: 310px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;

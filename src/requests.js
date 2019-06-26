@@ -53,7 +53,10 @@ export default {
       return r.delete(SERVER_URL + '/ideas/' + ideaID, getHeaders())
     },
     indexPicked: function() {
-      return r.get(SERVER_URL + '/index_picked/', getHeaders())
+      return r.get(SERVER_URL + '/picked_ideas', getHeaders())
+    },
+    indexPickedByChallenge: function(id) {
+      return r.get(SERVER_URL + '/challenges/' + id + '/picked_ideas', getHeaders())
     },
   },
   challenge: {
