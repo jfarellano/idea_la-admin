@@ -11,6 +11,7 @@ import Stages from './components/Stages.vue'
 import Comments from './components/Comments.vue'
 import PickedIdeas from './components/PickedIdeas.vue'
 import PickedIdeasResults from './components/PickedIdeasResults.vue'
+import ChallengeTexts from './components/ChallengeTexts.vue'
 
 Vue.use(Router)
 export default new Router ({
@@ -64,6 +65,11 @@ export default new Router ({
       path: '/picked_ideas_results',
       name: 'PickedIdeasResults',
       component: PickedIdeasResults
+    },
+    {
+      path: '/challenge_texts',
+      name: 'ChallengeTexts',
+      component: ChallengeTexts
     },
   ]
 })

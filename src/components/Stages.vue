@@ -104,7 +104,6 @@ export default {
       api.stages
       .setNext()
       .then(() => {
-        this.$refs.alert.success('Se ha pasado a la siguiente etapa.')
         this.$bvModal.hide("showNextStage");
         this.getCurrentStage();
       })

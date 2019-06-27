@@ -6,12 +6,8 @@
       <h1 v-else>Editar Reto</h1>
       <br>
       <b-row class="margins-content container-fluid">
-        <b-col cols="5" align="center" v-if="currentStage.number == 0">
-          <b-button
-            @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
-            class="loadBtn"
-            :disabled="validStage()"
-          >Carga tu imagen</b-button>
+        <b-col v-if="challengeID == 'new'" cols="5" align="center">
+          <b-img v-if="challenge.newPicture != null" class="avatar img-responsive" :src="getImage()"/>
           <b-form-file
             v-model="challenge.newPicture"
             accept="image/jpeg, image/png"
@@ -21,19 +17,35 @@
             :class="{'has-error': errors.has('image_size')}"
             name="image"
           />
+          <b-button
+            @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
+            class="loadBtn"
+            :disabled="validStage()"
+          >
+          <p v-if="challenge.newPicture != null">Cambiar tu imagen</p>
+          <p v-else>Carga imagen</p>
+          </b-button>
           <p v-if="challenge.newPicture != null" class="selectedImage">{{challenge.newPicture.name}}</p>
-          <p
-            v-if="errors.has('image')"
-            class="incorrectInput"
-          >La imagen es muy grande, el maximo son 2MB</p>
         </b-col>
-        <b-col cols="5" v-else>
-          <b-img
-            v-if="challenge.challenge_pictures != null"
-            class="avatar img-responsive"
-            :src="challenge.challenge_pictures[0].url"
-            alt="Circle image"
-          ></b-img>
+        <b-col v-else cols="5" align="center">
+          <img v-if="challenge.challenge_pictures != null && challenge.newPicture == null" class="avatar img-responsive" :src="challenge.challenge_pictures[0].url"/>
+          <img v-if="challenge.newPicture != null" class="avatar img-responsive" :src="getImage()"/>
+          <b-form-file
+            v-model="challenge.newPicture"
+            accept="image/jpeg, image/png"
+            style="display:none;"
+            ref="fileInput"
+            v-validate="'size:2000'"
+            :class="{'has-error': errors.has('image_size')}"
+            name="image"
+          />
+          <b-button
+            @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
+            class="loadBtn"
+            :disabled="validStage()"
+          >Cambiar tu imagen
+          </b-button>
+          <p v-if="challenge.newPicture != null" class="selectedImage">{{challenge.newPicture.name}}</p>
         </b-col>
         <b-col cols="7">
           <div v-if="challengeID != 'new'">
@@ -85,7 +97,6 @@
               type="button"
               class="btn btn-primary btn-lg btnStyle btnContinueStyle"
               v-on:click.prevent="acceptChallenge()"
-              :disabled='validStage()'
             >
             <p v-if="challengeID == 'new'">Crear</p>
             <p v-else>Guardar</p>
@@ -160,32 +171,29 @@ export default {
     })
   },
   methods: {
+    getImage() {
+      return URL.createObjectURL(this.challenge.newPicture);
+    },
     validStage(){
       if (this.currentStage.number == 0) return false;
       else return true;
     },
-    allValidInputs(){
-      // if (this.challenge.challenge_pictures != null || this.challenge.title == '' || 
-      // this.challenge.short_description == '' || this.challenge.description == '') {
-      if (this.challenge.title == '' || 
-      this.challenge.short_description == '' || this.challenge.description == '') {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    acceptChallenge(){
+    acceptChallenge() {
       var fd = new FormData();
       fd.append('title', this.challenge.title);
       fd.append('short_description', this.challenge.short_description)
       fd.append('description', this.challenge.description)
-      if (this.challenge.newPicture != null) fd.append("image", this.challenge.newPicture) 
+      if (this.challengeID != 'new' && this.challenge.newPicture != null) {
+        fd.append('image_update', this.challenge.newPicture)
+        fd.append('update_img', true)
+      } else if (this.challenge.newPicture != null) {
+        fd.append('image', this.challenge.newPicture)
+      }
 
       if (this.challengeID == 'new') {
         api.challenges
         .create(fd)
         .then((response) => {
-          // this.$refs.alert.success('Reto creado.')
           this.$router.push("/challenges")
         })
         .catch((err) => {
@@ -195,12 +203,11 @@ export default {
       } else {
         api.challenges
         .update(fd, this.challengeID)
-        .then(() => {
-          // this.$refs.alert.success('Reto modificado.')
+        .then((response) => {
           this.$router.push("/challenges")
         })
         .catch((err) => {
-          console.log(err.data)
+          console.log(err)
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       }

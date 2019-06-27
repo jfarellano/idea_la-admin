@@ -2,7 +2,7 @@
 // Se debe eliminar el recurso de variables debido a que se puede usar este mismo
 // servicio para el manejo de variables como se muestra en este ejemplo
 const r = require('axios');
-const SERVER_URL = 'http://dev.jfarellano.xyz'
+const SERVER_URL = 'https://dev.jfarellano.xyz'
 import auth from './authentication.js'
 
 function getHeaders() {
@@ -131,6 +131,9 @@ export default {
     },
     setNext: function(){
       return r.put(SERVER_URL + '/next_stage', {}, getHeaders())
+    },
+    changeText: function(body){
+      return r.put(SERVER_URL + '/change_text', body, getHeaders())
     }
-  }
+  },
 }

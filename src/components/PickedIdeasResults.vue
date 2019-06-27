@@ -4,9 +4,10 @@
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Resultados de Votaciones</h1>
+      <br>
       <b-row>
         <b-col align="center" class="chart-col">
-          <h3>Resultados de Ideas por Reto</h3>
+          <h3>Resultados por Reto</h3>
           <b-form-select
             class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
             :value="null"
@@ -26,7 +27,7 @@
           <apexchart type=pie width=380 :options="chartOptions" :series="series" />
         </b-col>
         <b-col align="center" class="chart-col">
-          <h3>Resultados de Ideas por Reto</h3>
+          <h3>Resultados por Localidad</h3>
           <b-form-select
             class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
             :value="null"
@@ -46,31 +47,7 @@
           <apexchart type=pie width=380 :options="chartOptions" :series="series" />
         </b-col>
       </b-row>
-
     </div>
-    
-    <!-- <div class="main-container container-fluid">
-      <b-button-group v-for="idea in filter()" :key="idea.id" class="list-item">
-        <b-button @click="showIdea(idea)" class="user">
-          <b-img
-            rounded="circle"
-            class="avatar img-responsive"
-            :src="idea.idea_pictures[0].url"
-            alt="Circle image"
-          ></b-img>
-          {{idea.title}}
-          <span class="extra">{{idea.votes}} voto(s)</span>
-        </b-button>
-        <div v-if="currentStage.number == 2">
-          <b-button v-if="!idea.picked" class="picker-icon" @click="pickIdea(idea.id)">
-            <font-awesome-icon icon="square"></font-awesome-icon>
-          </b-button>
-          <b-button v-else class="pick picker-icon" @click="unpickIdea(idea.id)">
-            <font-awesome-icon icon="check-square"></font-awesome-icon>
-          </b-button>
-        </div>
-      </b-button-group>
-    </div> -->
     <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     <b-modal id="showIdea" :title="idea.title" hide-footer>
       <div class="modal-container container-fluid">
@@ -121,9 +98,11 @@ export default {
   },
   data() {
     return {
-      series: [44, 55, 13, 43, 0],
+      series: [],
+      // series: [44, 55, 13, 43, 0],
       chartOptions: {
-        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+        labels: [],
+        // labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
         responsive: [{
           breakpoint: 480,
           options: {
@@ -140,7 +119,14 @@ export default {
 
       challengeFilter: '',
       challenges: [],
-      ideas: [],
+      ideas: [
+        {title: 'idea 1', votes: 5},
+        {title: 'idea 2', votes: 6},
+        {title: 'idea 3', votes: 10},
+        {title: 'idea 4', votes: 2},
+        {title: 'idea 5', votes: 14},
+      ],
+      // ideas: [],
       ideasByChal: [],
       idea: {},
       ideaParam: '',
@@ -159,6 +145,12 @@ export default {
         .indexPickedByChallenge(id)
         .then((response) => {
           this.ideas = response.data
+          this.series = []
+          this.chartOptions.labels = []
+          for (var key in this.ideas) {
+            this.series.push(this.ideas[key].votes)
+            this.chartOptions.labels.push(this.ideas[key].title)
+          }
         })
         .catch((err) => {
           console.log(err)
@@ -319,7 +311,6 @@ export default {
       .getCurrent()
       .then((response) => {
         this.currentStage = response.data
-        // if (this.currentStage.number < 2) this.$router.push('/ideas/all')
       })
       .catch((err) => {
         console.log(err)
@@ -330,6 +321,10 @@ export default {
   created() {
     this.getCurrentStage();
     this.getPickedIdeas();
+
+    api.variable.locations().then(response => {
+      this.locations = response.data;
+    });
 
     api.challenges
     .index()

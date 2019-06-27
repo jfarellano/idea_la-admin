@@ -121,7 +121,6 @@ export default {
               text: "Borrar",
               action: () => {
                 api.challenges.delete(challengeID).then(response => {
-                  this.$refs.alert.success('Reto eliminado.')
                   this.getChallenges();
                 }).catch((err) => {
                   console.log(err)

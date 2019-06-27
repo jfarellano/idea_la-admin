@@ -3,6 +3,9 @@
     <Header></Header>
     <div class="main-container container-fluid">
       <h1>Administrador</h1>
+      <router-link v-if="showButton('challenge_texts')" tag="b-button" class="button btnStyle" to="/challenge_texts">
+        <font-awesome-icon icon="font"/> Textos Retos
+      </router-link>
       <router-link v-if="showButton('users')" tag="b-button" class="button btnStyle" to="/users">
         <font-awesome-icon icon="users"/> Usuarios
       </router-link>
@@ -44,6 +47,10 @@ export default {
   methods: {
     showButton(option) {
       switch(option) {
+        case 'challenge_texts':
+          return true;
+        break;
+
         case 'users':
           return true;
         break;
