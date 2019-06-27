@@ -97,6 +97,7 @@
               type="button"
               class="btn btn-primary btn-lg btnStyle btnContinueStyle"
               v-on:click.prevent="acceptChallenge()"
+              :disabled="validInputs()"
             >
             <p v-if="challengeID == 'new'">Crear</p>
             <p v-else>Guardar</p>
@@ -171,6 +172,14 @@ export default {
     })
   },
   methods: {
+    validInputs(){
+      if (this.challenge.title == '' || 
+          this.challenge.description == '' || 
+          this.challenge.short_description == '' || 
+          this.challenge.newPicture == null) {
+        return true
+      } else return false
+    },
     getImage() {
       return URL.createObjectURL(this.challenge.newPicture);
     },

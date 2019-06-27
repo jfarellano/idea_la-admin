@@ -69,10 +69,31 @@
             <b>Por:</b>
             {{upCase(getName(idea.user.name, idea.user.lastname))}}
           </p>
-          <p align="justify">
-            <b>Descripción:</b><br>
+          <p align="justify" class="longText">
+            <b>Descripción:</b>
             {{idea.description}}
           </p>
+          <p align="justify" class="longText">
+            <b>Impacto:</b>
+            {{idea.impact}}
+          </p>
+          <p align="justify" class="longText">
+            <b>Problema:</b>
+            {{idea.problem}}
+          </p>
+          <p align="justify" class="longText">
+            <b>Miembros de Equipo:</b><br>
+            {{idea.companions}}
+          </p>
+          <p align="justify" class="longText">
+            <b>ODS:</b><br>
+            {{idea.ods}}
+          </p>
+          <p align="justify" class="longText">
+            <b>¿Cómo se enteraron?:</b><br>
+            {{idea.info_found}}
+          </p>
+          
         </div> 
       </div>
     </b-modal>
@@ -280,6 +301,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.longText {
+  word-wrap: break-word;
+}
 .picker-icon {
   width: 100%;
   height: 100%;

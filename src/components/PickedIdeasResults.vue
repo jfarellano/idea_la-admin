@@ -102,7 +102,7 @@ export default {
       // series: [44, 55, 13, 43, 0],
       chartOptions: {
         labels: [],
-        // labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+        labels: ['Idea 1', 'Idea 2', 'Idea 3', 'Idea 4', 'Idea 5'],
         responsive: [{
           breakpoint: 480,
           options: {

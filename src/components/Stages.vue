@@ -112,6 +112,8 @@ export default {
         if (err.response != null){
           if (err.response.data.authorization == 'There are not enough ideas created, minimum 5 per challenge') {
             this.$refs.alert.error('No hay suficientes ideas para pasar de etapa.')
+          } else if (err.response.data.authorization == 'There are not enough ideas picked, minimum 5 per challenge') { 
+            this.$refs.alert.error('No hay suficientes ideas seleccionadas.')
           }
         } else {
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
