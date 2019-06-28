@@ -13,7 +13,7 @@
               <img src="../assets/CamaraBaq-Blue.svg" alt height="54px" class="iconImage">
             </router-link>
 
-            <p class="iniciar-sesion">Iniciar Sesión admin</p>
+            <p class="iniciar-sesion">Iniciar Sesión Admin</p>
 
             <h3 class="input-title" id="email">Correo electrónico</h3>
             <div class="input-group">

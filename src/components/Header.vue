@@ -41,6 +41,7 @@
 <script>
 import auth from "../authentication.js";
 import { setTimeout } from "timers";
+import api from "../requests.js";
 
 export default {
   data() {
@@ -91,11 +92,31 @@ export default {
     }
   },
   created() {
-    var logged = auth.storage.logged()
-    if(logged){
-      this.tokenExists = logged
-      this.fullname = auth.storage.get("name");
-    }else{
+    var loged = auth.storage.logged();
+    if (loged) {
+      this.tokenExists = loged;
+      api.user
+        .show(auth.storage.get("user_id"))
+        .then(response => {
+          if (typeof response.data.picture == 'string')
+            auth.storage.setImage(response.data.picture);
+          else auth.storage.setImage(response.data.picture.url);
+          auth.storage.set_name(response.data.name, response.data.lastname);
+          this.fullname = auth.storage.get("name");
+        })
+        .catch(err => {
+          auth.storage.clear();
+          this.tokenExists = false;
+          if (err.response.data.authentication == "user not found") {
+            this.$refs.alert.warning(
+              "Tu sesión ha caducado, vuelve a iniciar sesión"
+            );
+          } else {
+            this.$refs.alert.network_error();
+          }
+          this.$router.push('/')
+        });
+    } else {
       auth.storage.clear()
       this.$router.push('/')
     }

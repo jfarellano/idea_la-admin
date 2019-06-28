@@ -30,6 +30,7 @@
             type="button"
             class="btn btn-primary btn-lg btnStyle btnContinueStyle"
             v-on:click.prevent="updateTexts()"
+            :disabled="validInputs()"
             >Guardar
           </button>
           <router-link
@@ -72,6 +73,10 @@ export default {
     })
   },
   methods: {
+    validInputs(){
+      if (this.currentStage.title == '' || this.currentStage.description == '') return true;
+      else return false;
+    },
     updateTexts() {
       api.stages
       .changeText({

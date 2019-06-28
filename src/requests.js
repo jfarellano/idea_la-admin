@@ -124,6 +124,9 @@ export default {
     },
     unblock: function(id) {
       return r.put(SERVER_URL + '/users/' + id + '/unblock', {}, getHeaders())
+    },
+    show: function(id){
+      return r.get(SERVER_URL + '/users/' + id, getHeaders())
     }
   },
   stages: {
