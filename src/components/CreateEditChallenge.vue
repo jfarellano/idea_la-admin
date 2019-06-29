@@ -156,7 +156,6 @@ export default {
         this.challenge = response.data;
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }
@@ -167,7 +166,6 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      console.log(err)
       this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
     })
   },
@@ -206,7 +204,6 @@ export default {
           this.$router.push("/challenges")
         })
         .catch((err) => {
-          console.log(err)
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       } else {
@@ -216,7 +213,6 @@ export default {
           this.$router.push("/challenges")
         })
         .catch((err) => {
-          console.log(err)
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       }

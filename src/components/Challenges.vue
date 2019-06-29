@@ -75,7 +75,6 @@ export default {
         this.challenges = response.data;
       })
       .catch(err => {
-        console.log(err.response);
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       });
     },
@@ -123,7 +122,6 @@ export default {
                 api.challenges.delete(challengeID).then(response => {
                   this.getChallenges();
                 }).catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 });
               }
@@ -143,7 +141,6 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      console.log(err)
       this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
     })
   }

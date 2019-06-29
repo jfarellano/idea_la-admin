@@ -83,7 +83,6 @@ export default {
           this.comments = response.data;
         })
         .catch(err => {
-          console.log(err);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -108,7 +107,6 @@ export default {
                   else this.getCommentsFromIdea(this.commentsParam);
                   this.$refs.alert.success('Comentario eliminado.')
                 }).catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 });
               }
@@ -146,7 +144,6 @@ export default {
           this.comments = response.data;
         })
         .catch(err => {
-          console.log(err.response);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -158,7 +155,6 @@ export default {
         if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }

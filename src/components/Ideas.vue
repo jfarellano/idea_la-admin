@@ -146,7 +146,6 @@ export default {
                   else this.getChallengeIdeas(this.ideaParam);
                 })
                 .catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 })
               }
@@ -176,7 +175,6 @@ export default {
                   else this.getChallengeIdeas(this.ideaParam);
                 })
                 .catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 })
               }
@@ -207,7 +205,6 @@ export default {
           this.ideas = response.data;
         })
         .catch(err => {
-          console.log(err.response);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -232,7 +229,6 @@ export default {
                   else this.getChallengeIdeas(this.ideaParam);
                   this.$refs.alert.success('Idea eliminada eliminada.')
                 }).catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 });
               }
@@ -273,7 +269,6 @@ export default {
         this.ideas = response.data;
       })
       .catch(err => {
-        console.log(err.response);
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       });
     },
@@ -285,7 +280,6 @@ export default {
         if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }

@@ -108,7 +108,6 @@ export default {
         this.getCurrentStage();
       })
       .catch((err) => {
-        console.log(err)
         if (err.response != null){
           if (err.response.data.authorization == 'There are not enough ideas created, minimum 5 per challenge') {
             this.$refs.alert.error('No hay suficientes ideas para pasar de etapa.')
@@ -127,7 +126,6 @@ export default {
         this.currentStage = response.data
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }

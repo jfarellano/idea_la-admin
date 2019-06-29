@@ -123,7 +123,6 @@ export default {
           this.ideas = response.data
         })
         .catch((err) => {
-          console.log(err)
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       }
@@ -147,7 +146,6 @@ export default {
                   this.getPickedIdeas();
                 })
                 .catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 })
               }
@@ -176,7 +174,6 @@ export default {
                   this.getPickedIdeas();
                 })
                 .catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 })
               }
@@ -207,7 +204,6 @@ export default {
           this.ideas = response.data;
         })
         .catch(err => {
-          console.log(err);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -231,7 +227,6 @@ export default {
                   this.getPickedIdeas();
                   this.$refs.alert.success('Idea eliminada eliminada.')
                 }).catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 });
               }
@@ -272,7 +267,6 @@ export default {
         this.ideas = response.data;
       })
       .catch(err => {
-        console.log(err);
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       });
     },
@@ -284,7 +278,6 @@ export default {
         // if (this.currentStage.number < 2) this.$router.push('/ideas/all')
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }
@@ -303,7 +296,6 @@ export default {
       })
     })
     .catch(err => {
-      console.log(err);
       this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
     });
   }

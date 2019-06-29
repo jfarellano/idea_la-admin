@@ -118,7 +118,6 @@ export default {
           this.users = response.data;
         })
         .catch(err => {
-          console.log(err.response);
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         });
     },
@@ -143,7 +142,6 @@ export default {
                   this.getUsers();
                   this.$refs.alert.success('Usuario eliminado.')
                 }).catch((err) => {
-                  console.log(err)
                   this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
                 });
               }
@@ -154,7 +152,6 @@ export default {
       );
     },
     blockUser(id) {
-      console.log("Usuario bloqueado: ", id);
       api.user
       .block(id)
       .then((response) => {
@@ -162,12 +159,10 @@ export default {
         this.getUsers();
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     },
     unblockUser(id){
-      console.log("Usuario desbloqueado: ",id);
       api.user
       .unblock(id)
       .then((response) => {
@@ -175,7 +170,6 @@ export default {
         this.getUsers();
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     },

@@ -68,7 +68,6 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      console.log(err)
       this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
     })
   },
@@ -87,7 +86,6 @@ export default {
         this.$router.push("/dashboard")
       })
       .catch((err) => {
-        console.log(err)
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
       })
     }
