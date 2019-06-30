@@ -59,6 +59,9 @@ export default {
     indexPickedByChallenge: function(id) {
       return r.get(SERVER_URL + '/challenges/' + id + '/picked_ideas', getHeaders())
     },
+    indexVotesByLocation: function(body, id) {
+      return r.post(SERVER_URL + '/challenges/' + id + '/index_ideas_winners', body)
+    },
   },
   challenge: {
     getInfo: function(challengeID) {

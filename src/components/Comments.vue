@@ -201,6 +201,7 @@ export default {
 }
 .main-container {
   padding-top: 330px;
+  margin-bottom: 15px;
   .list-item {
     width: 100%;
     border: 1px solid #0e2469;

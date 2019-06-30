@@ -12,7 +12,6 @@
         >Mostrar Todas
       </button>
       <router-link v-if="currentStage.number >= 2" tag="b-button" class="button btnStyle" to="/picked_ideas">Ideas Seleccionadas</router-link>
-      <!-- <router-link v-if="test >= 2" tag="b-button" class="button btnStyle" to="/picked_ideas">Ideas Seleccionadas</router-link> -->
       <div class="input-group">
         <input
           type="text"

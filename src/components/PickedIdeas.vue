@@ -298,6 +298,8 @@ export default {
     .catch(err => {
       this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
     });
+
+    this.challengeFilter = 0
   }
 };
 </script>

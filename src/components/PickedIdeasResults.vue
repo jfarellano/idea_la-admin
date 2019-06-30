@@ -24,63 +24,32 @@
             >{{ challenge.title }}</option>
           </b-form-select>
 
-          <apexchart type=pie width=380 :options="chartOptions" :series="series" />
+          <apexchart v-if="readyToRender" type=pie width=550 :options="chartOptions" :series="series" />
         </b-col>
-        <b-col align="center" class="chart-col">
+        <b-col align="center" class="chart-col" v-if="challengeFilter != 0">
           <h3>Resultados por Localidad</h3>
           <b-form-select
             class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
             :value="null"
             id="inline-form-custom-select-pref"
-            v-model="challengeFilter"
+            v-model="locationFilter"
             name="challenge"
-            @change="filterByChallenge(challengeFilter)"
+            @change="filterByLocation(locationFilter)"
+            place
           >
             <option
               slot="first"
-              v-for="(challenge, index) in challenges"
-              v-bind:value="challenge.id"
+              v-for="(location, index) in locations"
+              v-bind:value="location.id"
               :key="index"
-            >{{ challenge.title }}</option>
+            >{{ location.title }}</option>
           </b-form-select>
 
-          <apexchart type=pie width=380 :options="chartOptions" :series="series" />
+          <p v-if="sumVotes == 0 && locationFilter != ''">0 votos registrados.</p>
+          <apexchart v-if="readyToRenderLoc && locationFilter != '' && sumVotes > 0" type=pie width=550 :options="chartOptionsLoc" :series="seriesLoc" />
         </b-col>
       </b-row>
     </div>
-    <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
-    <b-modal id="showIdea" :title="idea.title" hide-footer>
-      <div class="modal-container container-fluid">
-        <b-img
-          v-if="idea.idea_pictures != null"
-          rounded="circle"
-          class="picture img-responsive"
-          :src="idea.idea_pictures[0].url"
-          alt="Circle image"
-        ></b-img>
-        <div class="leftModalContent">
-          <p v-if="idea.challenge != null">
-            <b>Reto: </b>
-            {{idea.challenge.title}}
-          </p>
-          <p>
-            {{idea.votes}} voto(s)
-          </p>
-            <p v-if="idea.comments > 0">
-              <router-link :to='"/comments/" + idea.id'>{{idea.comments}} comentario(s)</router-link>  
-            </p>
-            <p v-else>{{idea.comments}} comentario(s)</p>
-          <p v-if="idea.user != null">
-            <b>Por:</b>
-            {{upCase(getName(idea.user.name, idea.user.lastname))}}
-          </p>
-          <p align="justify">
-            <b>Descripción:</b><br>
-            {{idea.description}}
-          </p>
-        </div> 
-      </div>
-    </b-modal>
     <Alert ref="alert"></Alert >
   </section>
 </template>
@@ -98,11 +67,19 @@ export default {
   },
   data() {
     return {
+      locations: [
+        {title: 'Seleccionar Localidad', id: 0},
+        {title: 'Suroccidente', id: 1},
+        {title: 'Suroriente', id: 2},
+        {title: 'Norte – Centro Histórico', id: 3},
+        {title: 'Metropolitana', id: 4},
+        {title: 'Riomar', id: 5},
+      ],
+      readyToRender: false,
+      readyToRenderLoc: false,
       series: [],
-      // series: [44, 55, 13, 43, 0],
       chartOptions: {
         labels: [],
-        labels: ['Idea 1', 'Idea 2', 'Idea 3', 'Idea 4', 'Idea 5'],
         responsive: [{
           breakpoint: 480,
           options: {
@@ -113,31 +90,86 @@ export default {
               position: 'bottom'
             }
           }
-        }]
+        }],
       },
-
-
+      seriesLoc: [],
+      chartOptionsLoc: {
+        labels: [],
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }],
+      },
       challengeFilter: '',
+      locationFilter: '',
       challenges: [],
-      ideas: [
-        {title: 'idea 1', votes: 5},
-        {title: 'idea 2', votes: 6},
-        {title: 'idea 3', votes: 10},
-        {title: 'idea 4', votes: 2},
-        {title: 'idea 5', votes: 14},
-      ],
-      // ideas: [],
+      ideas: [],
+      ideasLoc: [],
       ideasByChal: [],
       idea: {},
-      ideaParam: '',
       currentStage: {},
-      search: "",
-      page: 1,
-      size: 10
+      sumVotes: 0
     };
   },
   methods: {
+    filterByLocation(id) {
+      this.readyToRenderLoc = false
+
+      var apiLocation = this.getLocationById(id);
+
+      api.ideas
+      .indexVotesByLocation({hood: apiLocation}, this.challengeFilter)
+      .then((response) => {
+        this.ideasLoc = response.data
+        this.seriesLoc = []
+        this.chartOptionsLoc.labels = []
+        this.sumVotes = 0
+        for (var key in this.ideasLoc) {
+          this.seriesLoc.push(this.ideasLoc[key].idea_votes)
+          this.chartOptionsLoc.labels.push(this.ideasLoc[key].idea.title)
+          this.sumVotes = this.sumVotes + this.ideasLoc[key].idea_votes
+        }
+        console.log('ideasLoc',this.ideasLoc)
+        console.log('seriesLoc',this.seriesLoc)
+        console.log('chartOptionsLoc.labels',this.chartOptionsLoc.labels)
+
+
+        this.readyToRenderLoc = true
+      })
+      .catch((err) => {
+        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      })
+    },
+    getLocationById(id){
+      switch(id) {
+        case 0:
+          break;
+        case 1:
+          return 'suroccidente'
+        break;
+        case 2:
+          return 'suroriente'
+        break;
+        case 3:
+          return 'norte_centro_historico'
+        break;
+        case 4:
+          return 'metropolitana'
+        break;
+        case 5:
+          return 'riomar'
+        break;
+      } 
+    },
     filterByChallenge(id) {
+      this.readyToRender = false
       if (id == 0) {
         this.getPickedIdeas();
       } else {
@@ -151,71 +183,13 @@ export default {
             this.series.push(this.ideas[key].votes)
             this.chartOptions.labels.push(this.ideas[key].title)
           }
+          this.readyToRender = true
+          if (this.locationFilter != 0) this.filterByLocation(this.locationFilter)
         })
         .catch((err) => {
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
         })
       }
-    },
-    pickIdea(id) {
-      this.$snotify.confirm(
-        "¿Estás seguro que quieres seleccionar esta idea?",
-        "Seleccionar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Seleccionar",
-              action: () => {
-                api.idea
-                .pick(id)
-                .then((response) => {
-                  this.getPickedIdeas();
-                })
-                .catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-                })
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
-      );
-    },
-    unpickIdea(id) {
-      this.$snotify.confirm(
-        "¿Estás seguro que quieres deseleccionar esta idea?",
-        "Deseleccionar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Deseleccionar",
-              action: () => {
-                api.idea
-                .unpick(id)
-                .then((response) => {
-                  this.getPickedIdeas();
-                })
-                .catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-                })
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
-      );
-    },
-    goToAllIdeas(){
-      this.$router.push('/ideas/all')
-      this.$router.go()
     },
     getName(name, last) {
       return name + " " + last;
@@ -228,10 +202,18 @@ export default {
       }
     },
     getPickedIdeas() {
+      this.readyToRender = false
       api.ideas
         .indexPicked()
         .then((response) => {
-          this.ideas = response.data;
+          this.ideas = response.data
+          this.series = []
+          this.chartOptions.labels = []
+          for (var key in this.ideas) {
+            this.series.push(this.ideas[key].votes)
+            this.chartOptions.labels.push(this.ideas[key].title)
+          }
+          this.readyToRender = true
         })
         .catch(err => {
           this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
@@ -239,32 +221,6 @@ export default {
     },
     pagination() {
       return this.page * this.size < this.ideas.length;
-    },
-    deleteIdea(idea) {
-      this.$snotify.confirm(
-        "¿Estas seguro que quieres eliminar esta idea?",
-        "Eliminar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.ideas.delete(idea.id).then(response => {
-                  this.getPickedIdeas();
-                  this.$refs.alert.success('Idea eliminada eliminada.')
-                }).catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
-      );
     },
     filter() {
       var list = [];
@@ -305,6 +261,7 @@ export default {
       .getCurrent()
       .then((response) => {
         this.currentStage = response.data
+        if (this.currentStage.number < 3) this.$router.push('/dashboard')
       })
       .catch((err) => {
         this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
@@ -315,22 +272,21 @@ export default {
     this.getCurrentStage();
     this.getPickedIdeas();
 
-    api.variable.locations().then(response => {
-      this.locations = response.data;
-    });
-
     api.challenges
     .index()
     .then(response => {
       this.challenges = response.data;
       this.challenges.push({
-        title: 'Todas',
+        title: 'Todos',
         id: 0
       })
     })
     .catch(err => {
       this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
     });
+
+    this.locationFilter = 0
+    this.challengeFilter = 0
   }
 };
 </script>
