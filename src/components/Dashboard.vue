@@ -41,7 +41,7 @@
           <router-link v-if="showButton('votes')" tag="b-button" class="button btnStyle" to="/picked_ideas_results">
             <font-awesome-icon icon="vote-yea"/> Votaciones
           </router-link>
-          <router-link v-if="showButton('surveys')" tag="b-button" class="button btnStyle" to="/stages">
+          <router-link v-if="showButton('surveys')" tag="b-button" class="button btnStyle" to="/survey_results">
             <font-awesome-icon icon="poll"/> Encuestas
           </router-link>
         </b-col>
@@ -111,7 +111,7 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      this.$refs.alert.network_error();
     })
   },
   mounted() {
@@ -123,7 +123,7 @@ export default {
 <style lang="scss" scoped>
 .btnStyle {
   margin: 10px;
-  width: 150px;
+  width: 170px;
 }
 .main-container {
   margin-top: 100px;

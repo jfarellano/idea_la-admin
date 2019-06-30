@@ -56,7 +56,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -79,7 +78,6 @@ export default {
       readyToRenderLoc: false,
       series: [],
       chartOptions: {
-        labels: [],
         responsive: [{
           breakpoint: 480,
           options: {
@@ -94,7 +92,6 @@ export default {
       },
       seriesLoc: [],
       chartOptionsLoc: {
-        labels: [],
         responsive: [{
           breakpoint: 480,
           options: {
@@ -136,15 +133,10 @@ export default {
           this.chartOptionsLoc.labels.push(this.ideasLoc[key].idea.title)
           this.sumVotes = this.sumVotes + this.ideasLoc[key].idea_votes
         }
-        console.log('ideasLoc',this.ideasLoc)
-        console.log('seriesLoc',this.seriesLoc)
-        console.log('chartOptionsLoc.labels',this.chartOptionsLoc.labels)
-
-
         this.readyToRenderLoc = true
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     },
     getLocationById(id){
@@ -187,18 +179,8 @@ export default {
           if (this.locationFilter != 0) this.filterByLocation(this.locationFilter)
         })
         .catch((err) => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         })
-      }
-    },
-    getName(name, last) {
-      return name + " " + last;
-    },
-    getImage(picture) {
-      if (picture != null) {
-        return picture.url;
-      } else {
-        return "https://via.placeholder.com/150";
       }
     },
     getPickedIdeas() {
@@ -216,35 +198,8 @@ export default {
           this.readyToRender = true
         })
         .catch(err => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         });
-    },
-    pagination() {
-      return this.page * this.size < this.ideas.length;
-    },
-    filter() {
-      var list = [];
-      if (this.search != "" && this.search != null) {
-        var here = this;
-        list = here.ideas.filter(function(idea) {
-          return (
-            idea.title.toLowerCase().includes(here.search.toLowerCase())
-          );
-        });
-      } else {
-        list = this.ideas;
-      }
-      return list.slice(0, this.page * this.size);
-    },
-    nextPage() {
-      this.page = this.page + 1;
-    },
-    showIdea(idea) {
-      this.idea = idea;
-      this.$bvModal.show("showIdea");
-    },
-    upCase(str) {
-      return api.utils.upcase(str);
     },
     getChallengeIdeas(challengeID) {
       api.ideas
@@ -253,7 +208,7 @@ export default {
         this.ideas = response.data;
       })
       .catch(err => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       });
     },
     getCurrentStage(){
@@ -264,7 +219,7 @@ export default {
         if (this.currentStage.number < 3) this.$router.push('/dashboard')
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     }
   },
@@ -282,7 +237,7 @@ export default {
       })
     })
     .catch(err => {
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      this.$refs.alert.network_error();
     });
 
     this.locationFilter = 0
@@ -299,25 +254,6 @@ export default {
 .dropdown-challenges {
   margin-top: 10px;
 }
-.picker-icon {
-  width: 100%;
-  height: 100%;
-  border-radius: 0px;
-}
-.separator {
-  height: 10px;
-}
-.btnStyle {
-  margin-right: 20px;
-  border-radius: 5px;
-  margin-top: 17px;
-  margin-bottom: 17px;
-  border-color: #0E2469;
-  background-color: #0E2469;
-}
-.leftModalContent {
-  text-align: left;
-}
 .fixed {
   position: fixed;
   z-index: 100;
@@ -333,65 +269,6 @@ export default {
   .btnBack {
     margin-top: 10px;
   }
-}
-.main-container {
-  padding-top: 310px;
-  .list-item {
-    width: 100%;
-    border: 1px solid #0e2469;
-    border-radius: 5px;
-    color: #0e2469;
-    margin-top: 7px;
-    .user {
-      width: 100%;
-      background-color: transparent;
-      color: #0e2469;
-      flex: 0 1 auto;
-      text-align: left;
-    }
-    .option {
-      background-color: #c7161c;
-      color: white;
-    }
-    .block {
-      width: 50px;
-      background-color: transparent;
-      color: #6a6a6a;
-    }
-    .pick {
-      background-color: #0B6623;
-    }
-    .avatar {
-      width: 34px;
-      height: 34px;
-    }
-    .extra {
-      color: #6a6a6a;
-      font-size: 12px;
-    }
-  }
-}
-.next {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #0e2469;
-  border-radius: 5px;
-  color: #0e2469;
-  margin: 10px 0px;
-}
-.modal-container {
-  text-align: center;
-  .picture {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 12px;
-  }
-  p {
-    color: #0e2469;
-  }
-}
-.modal-title {
-  color: #0e2469;
 }
 </style>
 

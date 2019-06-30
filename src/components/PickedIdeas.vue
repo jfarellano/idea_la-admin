@@ -123,7 +123,7 @@ export default {
           this.ideas = response.data
         })
         .catch((err) => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         })
       }
     },
@@ -146,7 +146,7 @@ export default {
                   this.getPickedIdeas();
                 })
                 .catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+                  this.$refs.alert.network_error();
                 })
               }
             },
@@ -174,7 +174,7 @@ export default {
                   this.getPickedIdeas();
                 })
                 .catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+                  this.$refs.alert.network_error();
                 })
               }
             },
@@ -204,7 +204,7 @@ export default {
           this.ideas = response.data;
         })
         .catch(err => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         });
     },
     pagination() {
@@ -227,7 +227,7 @@ export default {
                   this.getPickedIdeas();
                   this.$refs.alert.success('Idea eliminada eliminada.')
                 }).catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+                  this.$refs.alert.network_error();
                 });
               }
             },
@@ -267,7 +267,7 @@ export default {
         this.ideas = response.data;
       })
       .catch(err => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       });
     },
     getCurrentStage(){
@@ -275,10 +275,9 @@ export default {
       .getCurrent()
       .then((response) => {
         this.currentStage = response.data
-        // if (this.currentStage.number < 2) this.$router.push('/ideas/all')
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     }
   },
@@ -296,7 +295,7 @@ export default {
       })
     })
     .catch(err => {
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      this.$refs.alert.network_error();
     });
 
     this.challengeFilter = 0

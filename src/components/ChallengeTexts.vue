@@ -68,7 +68,7 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      this.$refs.alert.network_error();
     })
   },
   methods: {
@@ -86,7 +86,7 @@ export default {
         this.$router.push("/dashboard")
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     }
   }

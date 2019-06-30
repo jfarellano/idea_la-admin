@@ -216,15 +216,7 @@ export default {
     }
   }
   .btnLoginStyle {
-    // background-color: grey;
-    // border: grey;
-    // box-shadow: 0px 5px #ffe01b;
-    // border-radius: 0px;
-    // margin-top: 17px;
-    // margin-bottom: 17px;
-
     height: 50px;
-    // width: 100%;
     border-radius: 5px;
     border-color: #0e2469;
     background-color: #0e2469;
@@ -235,7 +227,6 @@ export default {
     border: 1px solid #0e2469;
     border-radius: 5px;
     box-shadow: 0 0 2px 0 #ffffff;
-    // width: 27.85%;
     height: 50px;
     font-size: 21px;
     color: #0e2469;
@@ -249,7 +240,6 @@ export default {
   }
   .iniciar-sesion {
     height: 44px;
-    // width: 213px;
     color: #0e2469;
     font-size: 35px;
     font-weight: bold;
@@ -257,7 +247,6 @@ export default {
   }
   .input-title {
     height: 27px;
-    // width: 175px;
     color: #6a6a6a;
     font-size: 21px;
     font-weight: 300;

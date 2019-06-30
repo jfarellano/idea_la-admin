@@ -21,6 +21,7 @@
             @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
             class="loadBtn"
             :disabled="validStage()"
+            v-if="currentStage.number == 0"
           >
           <p v-if="challenge.newPicture != null">Cambiar tu imagen</p>
           <p v-else>Carga imagen</p>
@@ -43,6 +44,7 @@
             @click="$refs.fileInput.$el.querySelector('input[type=file]').click()"
             class="loadBtn"
             :disabled="validStage()"
+            v-if="currentStage.number == 0"
           >Cambiar tu imagen
           </b-button>
           <p v-if="challenge.newPicture != null" class="selectedImage">{{challenge.newPicture.name}}</p>
@@ -156,7 +158,7 @@ export default {
         this.challenge = response.data;
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     }
 
@@ -166,7 +168,7 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      this.$refs.alert.network_error();
     })
   },
   methods: {
@@ -204,7 +206,7 @@ export default {
           this.$router.push("/challenges")
         })
         .catch((err) => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         })
       } else {
         api.challenges
@@ -213,7 +215,7 @@ export default {
           this.$router.push("/challenges")
         })
         .catch((err) => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         })
       }
     }

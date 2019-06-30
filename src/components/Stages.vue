@@ -115,7 +115,7 @@ export default {
             this.$refs.alert.error('No hay suficientes ideas seleccionadas.')
           }
         } else {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         }
       })
     },
@@ -126,7 +126,7 @@ export default {
         this.currentStage = response.data
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     }
   },

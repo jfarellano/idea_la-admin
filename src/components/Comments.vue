@@ -4,7 +4,6 @@
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Comentarios</h1>
-      <!-- <router-link v-if="commentsParam != 'all'" tag="b-button" class="button btnBack" to="/comments/all">Mostrar Todas</router-link> -->
       <button
         type="button"
         class="btn btn-primary btnStyle"
@@ -83,7 +82,7 @@ export default {
           this.comments = response.data;
         })
         .catch(err => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         });
     },
     pagination() {
@@ -107,7 +106,7 @@ export default {
                   else this.getCommentsFromIdea(this.commentsParam);
                   this.$refs.alert.success('Comentario eliminado.')
                 }).catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+                  this.$refs.alert.network_error();
                 });
               }
             },
@@ -144,7 +143,7 @@ export default {
           this.comments = response.data;
         })
         .catch(err => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         });
     },
     getCurrentStage(){
@@ -155,7 +154,7 @@ export default {
         if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     }
   },

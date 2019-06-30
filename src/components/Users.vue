@@ -21,11 +21,6 @@
             class="avatar img-responsive"
             :src="getImage(user.picture)"
           ></b-img>
-          <!-- <b-img
-            rounded="circle"
-            class="avatar img-responsive"
-            src="https://via.placeholder.com/150"
-          ></b-img> -->
           {{upCase(getName(user.name, user.lastname))}}
           <span class="extra">{{user.email}} (C.C. {{user.cc}})</span>
         </b-button>
@@ -118,7 +113,7 @@ export default {
           this.users = response.data;
         })
         .catch(err => {
-          this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+          this.$refs.alert.network_error();
         });
     },
     pagination() {
@@ -142,7 +137,7 @@ export default {
                   this.getUsers();
                   this.$refs.alert.success('Usuario eliminado.')
                 }).catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+                  this.$refs.alert.network_error();
                 });
               }
             },
@@ -159,7 +154,7 @@ export default {
         this.getUsers();
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     },
     unblockUser(id){
@@ -170,7 +165,7 @@ export default {
         this.getUsers();
       })
       .catch((err) => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       })
     },
     filter() {

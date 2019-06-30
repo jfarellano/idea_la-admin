@@ -59,10 +59,7 @@ export default {
       challenges: [],
       challenge: {},
       currentStage: '',
-
-      // users: [],
       search: "",
-      // user: {},
       page: 1,
       size: 10
     };
@@ -75,7 +72,7 @@ export default {
         this.challenges = response.data;
       })
       .catch(err => {
-        this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+        this.$refs.alert.network_error();
       });
     },
     filter() {
@@ -122,7 +119,7 @@ export default {
                 api.challenges.delete(challengeID).then(response => {
                   this.getChallenges();
                 }).catch((err) => {
-                  this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+                  this.$refs.alert.network_error();
                 });
               }
             },
@@ -141,7 +138,7 @@ export default {
       this.currentStage = response.data
     })
     .catch((err) => {
-      this.$refs.alert.error('Ha ocurrido un error. Intenta de nuevo más tarde.')
+      this.$refs.alert.network_error();
     })
   }
 };
