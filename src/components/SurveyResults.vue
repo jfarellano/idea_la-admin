@@ -137,7 +137,6 @@ export default {
         this.readyToRenderLoc = true
       })
       .catch(err => {
-        console.log(err)
         this.$refs.alert.network_error();
       })
     },
@@ -186,7 +185,6 @@ export default {
       }
     })
     .catch(err => {
-      console.log(err)
       this.$refs.alert.network_error();
     });
 
