@@ -18,6 +18,7 @@
             <h3 class="input-title" id="email">Correo electrónico</h3>
             <div class="input-group">
               <input
+                ref="email"
                 type="email"
                 class="form-control inputStyles"
                 placeholder="ej. example@email.com"
@@ -154,6 +155,9 @@ export default {
           }
         });
     }
+  },
+  created() {
+    // this.$refs.email.focus()
   }
 };
 </script>

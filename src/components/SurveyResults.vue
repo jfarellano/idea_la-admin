@@ -26,7 +26,7 @@
         
         <apexchart v-if="readyToRenderLoc && sumVotes != 0" type=bar height=350 :options="chartOptions" :series="series" />
         <div v-else>
-          <p v-if="locationFilter != ''">  0 encuestas registradas en esta localidad.</p>
+          <p v-if="locationFilter != ''">0 encuestas registradas en esta localidad.</p>
         </div>
       </b-col>
     </div>
@@ -71,7 +71,7 @@ export default {
             },
           },
           dataLabels: {
-            // enabled: false
+            enabled: false
           },
           stroke: {
             show: true,
@@ -123,12 +123,13 @@ export default {
         for (var key in resultsResponse) {
           var tempResult = resultsResponse[key]
           for (var key2 in tempResult) {
-            var parsedIndex = parseInt(key2[key2.length - 1] - 1)
+            // var parsedIndex = parseInt(key2[key2.length - 1] - 1)
+            var parsedIndex = parseInt(key2)
             resultsGraph[parsedIndex].push(tempResult[key2])
             this.sumVotes = this.sumVotes + tempResult[key2]
           }
         }
-        for (var i = 0; i < hashSize; i++){
+        for (i = 0; i < hashSize; i++){
           this.series.push({
             name: 'Puesto ' + (i + 1),
             data: resultsGraph[i]
@@ -136,7 +137,7 @@ export default {
         }
         this.readyToRenderLoc = true
       })
-      .catch(err => {
+      .catch(() => {
         this.$refs.alert.network_error();
       })
     },
@@ -146,19 +147,21 @@ export default {
           break;
         case 1:
           return 'suroccidente'
-        break;
+          break;
         case 2:
           return 'suroriente'
-        break;
+          break;
         case 3:
           return 'norte_centro_historico'
-        break;
+          break;
         case 4:
           return 'metropolitana'
-        break;
+          break;
         case 5:
           return 'riomar'
-        break;
+          break;
+        default:
+          return 'error'
       } 
     },
     getCurrentStage(){
@@ -168,7 +171,7 @@ export default {
         this.currentStage = response.data
         if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
-      .catch((err) => {
+      .catch(() => {
         this.$refs.alert.network_error();
       })
     }
@@ -184,7 +187,7 @@ export default {
         this.chartOptions.xaxis.categories.push(this.challenges[key].title)
       }
     })
-    .catch(err => {
+    .catch(() => {
       this.$refs.alert.network_error();
     });
 

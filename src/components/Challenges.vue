@@ -29,7 +29,6 @@
             rounded="circle"
             class="avatar img-responsive"
             :src="getImage(challenge.challenge_pictures[0])"
-            alt="Circle image"
           ></b-img>
           {{upCase(challenge.title)}}
         </router-link>
@@ -38,6 +37,7 @@
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
+      <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
     <Alert ref="alert"></Alert >
   </section>
@@ -99,6 +99,12 @@ export default {
       } else {
         return "https://via.placeholder.com/150";
       }
+    },
+    pagination() {
+      return this.page * this.size < this.challenges.length;
+    },
+    nextPage() {
+      this.page = this.page + 1;
     },
     upCase(str) {
       return api.utils.upcase(str);

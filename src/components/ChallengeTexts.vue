@@ -11,18 +11,29 @@
           type="text"
           class="form-control inputStyles"
           v-model="currentStage.title"
-          v-validate="'alpha_spaces|max:50|required'"
+          v-validate="'max:50|required'"
           :class="{'has-error': errors.has('title_invalid')}"
           name="title"
         >
+        <p
+          v-if="errors.has('title')"
+          class="incorrectInput"
+        >El título debe ser máximo de 50 caracteres</p>
       </div>
         <h5>Descripción</h5>
         <textarea 
           cols="101" 
           class="form-control long-text"
           v-model="currentStage.description"
+          v-validate="'max:400|required'"
+          :class="{'has-error': errors.has('description_invalid')}"
+          name="description"
         >
         </textarea>
+        <p
+          v-if="errors.has('description')"
+          class="incorrectInput"
+        >El título debe ser máximo de 400 caracteres</p>
       </b-row>
       <b-row>
         <b-col align="center">
@@ -72,8 +83,8 @@ export default {
     })
   },
   methods: {
-    validInputs(){
-      if (this.currentStage.title == '' || this.currentStage.description == '') return true;
+    validInputs() {
+      if (this.currentStage.title == '' || this.currentStage.description == '' || this.errors.items.length != 0) return true;
       else return false;
     },
     updateTexts() {
@@ -94,6 +105,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.incorrectInput {
+  color: red;
+  font-size: 12px;
+  margin: 0px;
+}
 .long-text {
   min-height: 100px;
   max-height: 300px;

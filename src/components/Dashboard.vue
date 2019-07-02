@@ -4,7 +4,7 @@
     <div class="main-container container-fluid">
       <b-row>
         <b-col align="center">
-          <h1>Panel Adminsitrativo</h1>
+          <h1>Panel Administrativo</h1>
           <br>
         </b-col>
       </b-row>
