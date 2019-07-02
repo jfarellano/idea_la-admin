@@ -139,8 +139,13 @@ export default {
     setNext: function(){
       return r.put(SERVER_URL + '/next_stage', {}, getHeaders())
     },
-    changeText: function(body){
+    changeText: function(body) {
       return r.put(SERVER_URL + '/change_text', body, getHeaders())
     }
   },
+  surveys: {
+    getResultsByHood: function(body) {
+      return r.post(SERVER_URL + '/count_hood_statistics', body, getHeaders())
+    },
+  }
 }
