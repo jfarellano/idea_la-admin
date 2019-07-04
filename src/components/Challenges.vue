@@ -3,7 +3,14 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Retos</h1>
+      <b-row>
+        <b-col>
+          <h1>Retos</h1>
+        </b-col>
+        <b-col align="right">
+          <h4 v-if="challengesReceived">{{challenges.length}} retos publicados</h4>
+        </b-col>
+      </b-row>
       <div class="input-group">
         <input
           type="text"
@@ -37,6 +44,13 @@
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
+      <b v-if="filter().length == 0 && challenges != ''">No hay retos que coincidan con la búsqueda</b>
+      <b v-if="challenges == '' && challengesReceived">No hay retos registrados</b>
+      <b-row v-else>
+        <b-col align="center">
+          <b-spinner v-if="challenges == ''" class="d-flex align-items-center" label="Loading..."></b-spinner>
+        </b-col>
+      </b-row>
       <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
     <Alert ref="alert"></Alert >
@@ -45,7 +59,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -61,7 +74,8 @@ export default {
       currentStage: '',
       search: "",
       page: 1,
-      size: 10
+      size: 10,
+      challengesReceived: false
     };
   },
   methods: {
@@ -110,38 +124,29 @@ export default {
       return api.utils.upcase(str);
     },
     deleteChallenge(challengeID) {
-      this.$snotify.confirm(
+      this.$refs.alert.confirm(
+        "Eliminar",
         "¿Estás seguro que desea eliminar este reto?",
-        "Eliminar reto",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.challenges.delete(challengeID).then(response => {
-                  this.getChallenges();
-                }).catch((err) => {
-                  this.$refs.alert.network_error();
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        () => {
+          api.challenges.delete(challengeID).then(response => {
+            this.getChallenges();
+          }).catch((err) => {
+            this.$refs.alert.network_error();
+          });
+        },
+        function() {}
       );
     },
   },
   created() {
+    this.$snotify.clear()
     this.getChallenges();
 
     api.stages
     .getCurrent()
     .then((response) => {
       this.currentStage = response.data
+      this.challengesReceived = true
     })
     .catch((err) => {
       this.$refs.alert.network_error();

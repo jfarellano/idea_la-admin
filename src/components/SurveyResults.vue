@@ -177,6 +177,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     this.getCurrentStage();
 
     api.challenges

@@ -3,7 +3,14 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Ideas</h1>
+      <b-row>
+        <b-col>
+          <h1>Ideas</h1>
+        </b-col>
+        <b-col align="right">
+          <h4 v-if="ideasReceived">{{ideas.length}} ideas publicadas</h4>
+        </b-col>
+      </b-row>
       <button
         type="button"
         class="btn btn-primary btnStyle"
@@ -46,6 +53,13 @@
       </b-button-group>
       <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
+    <b v-if="filter().length == 0 && ideas != ''">No hay ideas que coincidan con la búsqueda</b>
+    <b v-if="ideas == '' && ideasReceived">No hay ideas registradas</b>
+    <b-row v-else>
+      <b-col align="center">
+        <b-spinner v-if="ideas == ''" class="d-flex align-items-center" label="Loading..."></b-spinner>
+      </b-col>
+    </b-row>
     <b-modal id="showIdea" :title="idea.title" hide-footer>
       <div class="modal-container container-fluid">
         <b-img
@@ -102,7 +116,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -121,7 +134,8 @@ export default {
       currentStage: {},
       search: "",
       page: 1,
-      size: 10
+      size: 10,
+      ideasReceived: false
     };
   },
   methods: {
@@ -130,10 +144,7 @@ export default {
         "¿Estás seguro que quieres seleccionar esta idea?",
         "Seleccionar idea",
         {
-          timeout: 2000,
-          showProgressBar: true,
           closeOnClick: false,
-          pauseOnHover: true,
           buttons: [
             {
               text: "Seleccionar",
@@ -159,10 +170,7 @@ export default {
         "¿Estás seguro que quieres deseleccionar esta idea?",
         "Deseleccionar idea",
         {
-          timeout: 2000,
-          showProgressBar: true,
           closeOnClick: false,
-          pauseOnHover: true,
           buttons: [
             {
               text: "Deseleccionar",
@@ -202,6 +210,7 @@ export default {
         .indexAll()
         .then(response => {
           this.ideas = response.data;
+          this.ideasReceived = true
         })
         .catch(err => {
           this.$refs.alert.network_error();
@@ -211,30 +220,19 @@ export default {
       return this.page * this.size < this.ideas.length;
     },
     deleteIdea(idea) {
-      this.$snotify.confirm(
+      this.$refs.alert.confirm(
+        "Eliminar",
         "¿Estas seguro que quieres eliminar esta idea?",
-        "Eliminar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.ideas.delete(idea.id).then(response => {
-                  if (this.ideaParam == 'all') this.getIdeas();
-                  else this.getChallengeIdeas(this.ideaParam);
-                  this.$refs.alert.success('Idea eliminada eliminada.')
-                }).catch((err) => {
-                  this.$refs.alert.network_error();
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        () => {
+          api.ideas.delete(idea.id).then(response => {
+            if (this.ideaParam == 'all') this.getIdeas();
+            else this.getChallengeIdeas(this.ideaParam);
+            this.$refs.alert.success('Idea eliminada eliminada.')
+          }).catch((err) => {
+            this.$refs.alert.network_error();
+          });
+        },
+        function() {}
       );
     },
     filter() {
@@ -284,6 +282,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     this.ideaParam = this.$route.params.ideaParam;
     if (this.ideaParam == 'all') this.getIdeas();
     else this.getChallengeIdeas(this.ideaParam);

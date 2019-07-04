@@ -22,7 +22,12 @@ Vue.component('apexchart', VueApexCharts)
 library.add(fas)
 
 Vue.use(VueApexCharts)
-Vue.use(Snotify)
+Vue.use(Snotify, {
+  global: {
+    maxOnScreen: 2,
+    preventDuplicates: true,
+  },
+})
 Vue.use(VeeValidate);
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false

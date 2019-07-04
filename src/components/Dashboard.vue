@@ -67,29 +67,19 @@ export default {
     showButton(option) {
       switch(option) {
         case 'challenge_texts':
-          return true;
-        break;
-
+        case 'stages':
         case 'users':
+        case 'challenges':{
           return true;
-        break;
-
-        case 'challenges':
-          return true;
+        }
         break;
 
         case 'ideas':
-          if (this.currentStage.number >= 1) return true;
-          else return false;
-        break;
-
         case 'comments':
+        case 'surveys': {
           if (this.currentStage.number >= 1) return true;
           else return false;
-        break;
-
-        case 'stages':
-          return true;
+        }
         break;
 
         case 'votes':
@@ -97,14 +87,14 @@ export default {
           else return false;
         break;
 
-        case 'surveys':
-          if (this.currentStage.number >= 1) return true;
-          else return false;
+        default:
+          return false;
         break;
       }
     }
   },
   created() {
+    this.$snotify.clear()
     api.stages
     .getCurrent()
     .then((response) => {

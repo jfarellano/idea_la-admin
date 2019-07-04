@@ -27,6 +27,7 @@
           <p v-else>Carga imagen</p>
           </b-button>
           <p v-if="challenge.newPicture != null" class="selectedImage">{{challenge.newPicture.name}}</p>
+          <p v-if="challenge.newPicture == null" class="incorrectInput">Esta imagen es obligatoria</p>
         </b-col>
         <b-col v-else cols="5" align="center">
           <img v-if="challenge.challenge_pictures != null && challenge.newPicture == null" class="avatar img-responsive" :src="challenge.challenge_pictures[0].url"/>
@@ -63,20 +64,32 @@
               type="text"
               class="form-control inputStyles"
               v-model="challenge.title"
-              v-validate="'alpha_spaces|max:50|required'"
-              :class="{'has-error': errors.has('name_invalid')}"
-              name="name"
+              v-validate="'required'"
+              :class="{'has-error': errors.has('title_invalid')}"
+              name="title"
               :disabled="validStage()"
             >
           </div>
+          <p
+            v-if="errors.has('title')"
+            class="incorrectInput"
+          >Este campo es obligatorio</p>
+
           <h5>Descripción breve</h5>
           <textarea 
             cols="101" 
             class="form-control short-description" 
+            v-validate="'required'"
+            :class="{'has-error': errors.has('short-description_invalid')}"
+            name="short-description"
             v-model="challenge.short_description" 
             :disabled="validStage()"
           >
           </textarea>
+          <p
+            v-if="errors.has('short-description')"
+            class="incorrectInput"
+          >Este campo es obligatorio</p>
         </b-col>
       </b-row>
       <b-row class="margins-content">
@@ -87,9 +100,16 @@
             cols="101" 
             class="form-control longDescription" 
             v-model="challenge.description"
-            :disabled="validStage()"  
+            :disabled="validStage()"
+            v-validate="'required'"
+            :class="{'has-error': errors.has('long-description_invalid')}"
+            name="long-description"
           >
           </textarea>
+          <p
+            v-if="errors.has('long-description')"
+            class="incorrectInput"
+          >Este campo es obligatorio</p>
         </b-col>
       </b-row>
       <b-row class="margins-content">
@@ -130,7 +150,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -141,14 +160,14 @@ export default {
   },
   data(){
     return{
-      test: [],
       currentStage: '',
-
+      processing: false,
       challengeID: '',
       challenge: {},
     }
   },
   created(){
+    this.$snotify.clear()
     this.challengeID = this.$route.params.challengeID;
     
     if (this.challengeID != 'new') {
@@ -174,9 +193,13 @@ export default {
   methods: {
     validInputs(){
       if (this.challenge.title == '' || 
+          this.challenge.title == null || 
           this.challenge.description == '' || 
+          this.challenge.description == null || 
           this.challenge.short_description == '' || 
-          this.challenge.newPicture == null) {
+          this.challenge.short_description == null || 
+          this.challenge.newPicture == null ||
+          this.processing) {
         return true
       } else return false
     },
@@ -188,6 +211,8 @@ export default {
       else return true;
     },
     acceptChallenge() {
+      this.processing = true
+
       var fd = new FormData();
       fd.append('title', this.challenge.title);
       fd.append('short_description', this.challenge.short_description)
@@ -203,7 +228,8 @@ export default {
         api.challenges
         .create(fd)
         .then((response) => {
-          this.$router.push("/challenges")
+          this.$refs.alert.success('Reto creado.')
+          setTimeout(() => this.$router.push("/challenges"), 2000);
         })
         .catch((err) => {
           this.$refs.alert.network_error();
@@ -212,7 +238,8 @@ export default {
         api.challenges
         .update(fd, this.challengeID)
         .then((response) => {
-          this.$router.push("/challenges")
+          this.$refs.alert.success('Reto modificado.')
+          setTimeout(() => this.$router.push("/challenges"), 2000);
         })
         .catch((err) => {
           this.$refs.alert.network_error();
@@ -224,6 +251,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.incorrectInput {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
 .short-description {
   max-height: 100px;
   min-height: 50px;

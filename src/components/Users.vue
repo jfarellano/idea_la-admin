@@ -3,7 +3,14 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Usuarios</h1>
+      <b-row>
+        <b-col>
+          <h1>Usuarios</h1>
+        </b-col>
+        <b-col align="right">
+          <h4 v-if="usersReceived">{{users.length}} usuarios registrados</h4>
+        </b-col>
+      </b-row>
       <div class="input-group">
         <input
           type="text"
@@ -24,10 +31,10 @@
           {{upCase(getName(user.name, user.lastname))}}
           <span class="extra">{{user.email}} (C.C. {{user.cc}})</span>
         </b-button>
-        <b-button class="unblock" @click="blockUser(user.id)" v-if="user.block == null">
+        <b-button class="unblock" @click="blockUser(user)" v-if="user.block == null">
           <font-awesome-icon icon="user"></font-awesome-icon>
         </b-button>
-        <b-button class="block" @click="unblockUser(user.id)" v-else>
+        <b-button class="block" @click="unblockUser(user)" v-else>
           <font-awesome-icon icon="user-slash"></font-awesome-icon>
         </b-button>
         
@@ -37,6 +44,13 @@
       </b-button-group>
       <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
+    <b v-if="filter().length == 0 && users != ''">No hay usuarios que coincidan con la búsqueda</b>
+    <b v-if="users == '' && usersReceived">No hay usuarios registrados</b>
+    <b-row v-else>
+      <b-col align="center">
+        <b-spinner v-if="users == ''" class="d-flex align-items-center" label="Loading..."></b-spinner>
+      </b-col>
+    </b-row>
     <b-modal id="showUser" :title="upCase(getName(user.name, user.lastname))" hide-footer>
       <div class="modal-container container-fluid">
         <b-img
@@ -77,7 +91,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue";
 
@@ -92,7 +105,8 @@ export default {
       search: "",
       user: {},
       page: 1,
-      size: 10
+      size: 10,
+      usersReceived: false
     };
   },
   methods: {
@@ -111,62 +125,69 @@ export default {
         .get()
         .then(response => {
           this.users = response.data;
+          this.usersReceived = true
         })
         .catch(err => {
           this.$refs.alert.network_error();
+          this.usersReceived = true
         });
     },
     pagination() {
       return this.page * this.size < this.users.length;
     },
     deleteUser(user) {
-      this.$snotify.confirm(
-        "¿Estas seguro que quieres eliminar a " +
-          this.upCase(this.getName(user.name, user.lastname)) + "?",
-        "Eliminar usuario",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.user.delete(user.id).then(response => {
-                  this.getUsers();
-                  this.$refs.alert.success('Usuario eliminado.')
-                }).catch((err) => {
-                  this.$refs.alert.network_error();
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+      this.$refs.alert.confirm(
+        "Eliminar",
+        "¿Estás seguro que quieres eliminar a " +
+         this.upCase(this.getName(user.name, user.lastname)) + "?",
+        () => {
+          api.user.delete(user.id).then(response => {
+            this.getUsers();
+            this.$refs.alert.success('Usuario eliminado.')
+          }).catch((err) => {
+            this.$refs.alert.network_error();
+          });
+        },
+        function() {}
       );
     },
-    blockUser(id) {
-      api.user
-      .block(id)
-      .then((response) => {
-        this.$refs.alert.success('El usuario ha sido bloqueado.')
-        this.getUsers();
-      })
-      .catch((err) => {
-        this.$refs.alert.network_error();
-      })
+    blockUser(user) {
+      this.$refs.alert.confirm(
+        "Bloquear",
+        "¿Estás seguro que quieres bloquear a " +
+         this.upCase(this.getName(user.name, user.lastname)) + "?",
+        () => {
+          api.user
+          .block(user.id)
+          .then((response) => {
+            this.$refs.alert.success('Usuario bloqueado.')
+            this.getUsers();
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
+      );
     },
-    unblockUser(id){
-      api.user
-      .unblock(id)
-      .then((response) => {
-        this.$refs.alert.success('El usuario ha sido desbloqueado.')
-        this.getUsers();
-      })
-      .catch((err) => {
-        this.$refs.alert.network_error();
-      })
+    unblockUser(user) {
+      this.$refs.alert.confirm(
+        "Desbloquear",
+        "¿Estás seguro que quieres desbloquear a " +
+         this.upCase(this.getName(user.name, user.lastname)) + "?",
+        () => {
+          api.user
+                .unblock(user.id)
+                .then((response) => {
+                  this.$refs.alert.success('El usuario ha sido desbloqueado.')
+                  this.getUsers();
+                })
+                .catch((err) => {
+                  this.$refs.alert.network_error();
+                })
+        },
+        function() {}
+      );
     },
     filter() {
       var list = [];
@@ -217,6 +238,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     this.getUsers();
   }
 };

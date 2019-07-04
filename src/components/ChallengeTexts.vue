@@ -18,7 +18,7 @@
         <p
           v-if="errors.has('title')"
           class="incorrectInput"
-        >El título debe ser máximo de 50 caracteres</p>
+        >El título es obligatorio y debe ser máximo de 50 caracteres</p>
       </div>
         <h5>Descripción</h5>
         <textarea 
@@ -33,7 +33,7 @@
         <p
           v-if="errors.has('description')"
           class="incorrectInput"
-        >El título debe ser máximo de 400 caracteres</p>
+        >El texto es obligatorio y debe ser máximo de 400 caracteres</p>
       </b-row>
       <b-row>
         <b-col align="center">
@@ -58,7 +58,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -73,6 +72,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     api.stages
     .getCurrent()
     .then((response) => {

@@ -88,7 +88,6 @@ export default {
         case 4:
           return 'Se cierran la votaciones y solo se muestran las ideas ganadoras por cada reto. Los usuarios pueden seguir comentando las ideas ganadoras. Se pueden registrar usuarios. No se puede votar por ideas. No se pueden agregar mas ideas. No se pueden editar ideas. No se puede agregar mas retos.'
           break;
-          break;
         default:
           return 'Ha ocurrido un error'
           break;
@@ -113,6 +112,10 @@ export default {
             this.$refs.alert.error('No hay suficientes ideas para pasar de etapa.')
           } else if (err.response.data.authorization == 'There are not enough ideas picked, minimum 5 per challenge') { 
             this.$refs.alert.error('No hay suficientes ideas seleccionadas.')
+          } else if (err.response.data.authorization == 'There are no challenges created') { 
+            this.$refs.alert.error('No hay retos creados.')
+          } else if (err.response.data.authorization == 'There are no votes created') { 
+            this.$refs.alert.error('No hay votos creados.')
           }
         } else {
           this.$refs.alert.network_error();
@@ -131,6 +134,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     this.getCurrentStage();
   }
 };

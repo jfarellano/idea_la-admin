@@ -44,7 +44,7 @@
               >
             </div>
             <p v-if="errors.has('password')" class="incorrectInput">Este campo es obligatorio.</p>
-
+            <p v-if="blocked" class="color-red">Estás bloqueado por {{time}} segundos</p>
             <button
               type="button"
               class="btn btn-primary btn-lg btn-block btnLoginStyle"
@@ -61,17 +61,25 @@
     <b-modal id="modalPopover blocked" title="Atención" ok-only>
       <p class="parag">Usuario bloqueado.</p>
     </b-modal>
-    <vue-snotify></vue-snotify>
+    <Alert ref="alert"></Alert>
   </div>
 </template>
 
 <script>
 import auth from "../authentication.js";
+import Alert from "./Alert.vue";
+import { setTimeout } from "timers";
 
 export default {
+  components: {
+    Alert
+  },
   data() {
     return {
-      userCredentials: {}
+      userCredentials: {},
+      blocked: false,
+      active: true,
+      time: 0
     };
   },
   methods: {
@@ -79,90 +87,154 @@ export default {
       if (
         this.errors.count() == 0 &&
         this.userCredentials.email != null &&
-        this.userCredentials.password != null
+        this.userCredentials.password != null &&
+        this.blocked == false
       ) {
         return true;
       } else {
         return false;
       }
     },
+    blockedTime() {
+        setTimeout(() => {
+          this.blocked = auth.session.blocked();
+          if (!this.blocked){
+            this.active = true
+          }else{
+            this.time = Math.trunc(60.0 - ((Date.now() - this.blocked) / 1000))
+            this.blockedTime()
+          }
+        }, 1000);
+    },
     userLogin() {
+      this.active = false;
       auth.session
         .login({
           email: this.userCredentials.email,
           password: this.userCredentials.password
         })
         .then(response => {
-          if (response.data.is_admin) {
-            auth.storage.set(
-              response.data.user.id,
-              response.data.secret,
-              response.data.expire_at,
-              response.data.is_admin
-            );
-            if (typeof response.data.user.picture == 'object')
-              auth.storage.setImage(response.data.user.picture.url);
-            else auth.storage.setImage(response.data.user.picture);
-            auth.storage.set_name(
-              response.data.user.name,
-              response.data.user.lastname
-            );
-            this.$router.push("/dashboard");
-          } else {
-            this.$snotify.error("Su usuario no es admin", "Atención", {
-              timeout: 2000,
-              showProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true
-            });
-          }
+          auth.storage.set(
+            response.data.user.id,
+            response.data.secret,
+            response.data.expire_at
+          );
+          auth.session.stage().then(response => {
+            auth.storage.set_stage(response.data.number);
+          });
+          this.$router.push("/dashboard");
         })
         .catch(err => {
+          setTimeout(()=>{this.active = true;}, 1000)
           if (err.response == null) {
-            this.$snotify.error("Error de red. Inténtelo mas tarde.", "Error", {
-              timeout: 2000,
-              showProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true
-            });
+            this.$refs.alert.network_error();
           } else {
-            if (err.response.data.single_authentication == "invalid credentials") {
-              this.$snotify.error("Credenciales inválidas.", "Atención", {
-                timeout: 2000,
-                showProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true
-              });
-              this.userCredentials.password = ""
-            } else if (err.response.data.single_authentication == "user is blocked") {
-              // ALERT NOTIFICATION USER BLOCKED
-              this.$snotify.error("Usuario bloqueado", "Atención", {
-                timeout: 2000,
-                showProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true
-              });
+            auth.session.wrong_attempt()
+            this.blocked = auth.session.blocked()
+            if (this.blocked){
+              this.time = Math.trunc(60.0 - ((Date.now() - this.blocked) / 1000))
+              this.blockedTime()
+            }
+            if (
+              err.response.data.single_authentication == "invalid credentials"
+            ) {
+              this.$refs.alert.credentials_error();
+              this.userCredentials.password = "";
+            } else if (
+              err.response.data.single_authentication == "user is blocked"
+            ) {
+              this.$refs.alert.blocked_user();
               this.userCredentials.username = "";
               this.userCredentials.password = "";
             } else {
-              this.$snotify.error("Error de red. Inténtelo mas tarde.", "Error", {
-                timeout: 2000,
-                showProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true
-              });
+              this.$refs.alert.network_error();
             }
           }
         });
     }
+    // userLogin() {
+    //   auth.session
+    //     .login({
+    //       email: this.userCredentials.email,
+    //       password: this.userCredentials.password
+    //     })
+    //     .then(response => {
+    //       if (response.data.is_admin) {
+    //         auth.storage.set(
+    //           response.data.user.id,
+    //           response.data.secret,
+    //           response.data.expire_at,
+    //           response.data.is_admin
+    //         );
+    //         if (typeof response.data.user.picture == 'object')
+    //           auth.storage.setImage(response.data.user.picture.url);
+    //         else auth.storage.setImage(response.data.user.picture);
+    //         auth.storage.set_name(
+    //           response.data.user.name,
+    //           response.data.user.lastname
+    //         );
+    //         this.$router.push("/dashboard");
+    //       } else {
+    //         this.$snotify.error("Su usuario no es admin", "Atención", {
+    //           timeout: 2000,
+    //           showProgressBar: false,
+    //           closeOnClick: true,
+    //           pauseOnHover: true
+    //         });
+    //       }
+    //     })
+    //     .catch(err => {
+    //       if (err.response == null) {
+    //         this.$snotify.error("Error de red. Inténtelo mas tarde.", "Error", {
+    //           timeout: 2000,
+    //           showProgressBar: false,
+    //           closeOnClick: true,
+    //           pauseOnHover: true
+    //         });
+    //       } else {
+    //         if (err.response.data.single_authentication == "invalid credentials") {
+    //           this.$snotify.error("Credenciales inválidas.", "Atención", {
+    //             timeout: 2000,
+    //             showProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true
+    //           });
+    //           this.userCredentials.password = ""
+    //         } else if (err.response.data.single_authentication == "user is blocked") {
+    //           // ALERT NOTIFICATION USER BLOCKED
+    //           this.$snotify.error("Usuario bloqueado", "Atención", {
+    //             timeout: 2000,
+    //             showProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true
+    //           });
+    //           this.userCredentials.username = "";
+    //           this.userCredentials.password = "";
+    //         } else {
+    //           this.$snotify.error("Error de red. Inténtelo mas tarde.", "Error", {
+    //             timeout: 2000,
+    //             showProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true
+    //           });
+    //         }
+    //       }
+    //     });
+    // }
   },
-  created() {
-    // this.$refs.email.focus()
+  created(){
+    this.$snotify.clear()
+  },
+  mounted() {
+    this.$refs.email.focus()
   }
 };
 </script>
 
 <style scoped style lang="scss">
+.color-red {
+  color: red;
+}
 .loginComponent {
   background-color: #0e2469;
   height: 100%;

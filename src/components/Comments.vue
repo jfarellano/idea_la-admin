@@ -3,7 +3,14 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
-      <h1>Comentarios</h1>
+      <b-row>
+        <b-col>
+          <h1>Comentarios</h1>
+        </b-col>
+        <b-col align="right">
+          <h4 v-if="commentsReceived">{{comments.length}} comentarios publicados</h4>
+        </b-col>
+      </b-row>
       <button
         type="button"
         class="btn btn-primary btnStyle"
@@ -36,6 +43,13 @@
           <font-awesome-icon icon="trash"></font-awesome-icon>
         </b-button>
       </b-button-group>
+      <b v-if="filter().length == 0 && comments.length != ''">No hay comentarios que coincidan con la búsqueda</b>
+      <b v-if="comments.length == '' && commentsReceived">No hay comentarios registrados</b>
+      <b-row v-else>
+        <b-col align="center">
+          <b-spinner v-if="comments == ''" class="d-flex align-items-center" label="Loading..."></b-spinner>
+        </b-col>
+      </b-row>
       <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
     </div>
     <Alert ref="alert"></Alert >
@@ -44,7 +58,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -60,7 +73,8 @@ export default {
       currentStage: {},
       search: "",
       page: 1,
-      size: 10
+      size: 10,
+      commentsReceived: false
     };
   },
   methods: {
@@ -80,6 +94,7 @@ export default {
         .getAll()
         .then(response => {
           this.comments = response.data;
+          this.commentsReceived = true
         })
         .catch(err => {
           this.$refs.alert.network_error();
@@ -89,30 +104,19 @@ export default {
       return this.page * this.size < this.comments.length;
     },
     deleteComment(comment) {
-      this.$snotify.confirm(
+      this.$refs.alert.confirm(
+        "Eliminar",
         "¿Estas seguro que quieres eliminar este comentario?",
-        "Eliminar comentario",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.comments.delete(comment.id).then(response => {
-                  if (this.commentsParam == 'all') this.getComments();
-                  else this.getCommentsFromIdea(this.commentsParam);
-                  this.$refs.alert.success('Comentario eliminado.')
-                }).catch((err) => {
-                  this.$refs.alert.network_error();
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        () => {
+          api.comments.delete(comment.id).then(response => {
+            if (this.commentsParam == 'all') this.getComments();
+            else this.getCommentsFromIdea(this.commentsParam);
+            this.$refs.alert.success('Comentario eliminado.')
+          }).catch((err) => {
+            this.$refs.alert.network_error();
+          });
+        },
+        function() {}
       );
     },
     filter() {
@@ -159,6 +163,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     this.commentsParam = this.$route.params.commentsParam;
     if (this.commentsParam == 'all') this.getComments();
     else this.getCommentsFromIdea(this.commentsParam);

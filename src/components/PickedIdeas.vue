@@ -282,6 +282,7 @@ export default {
     }
   },
   created() {
+    this.$snotify.clear()
     this.getCurrentStage();
     this.getPickedIdeas();
 
