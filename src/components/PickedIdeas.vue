@@ -3,7 +3,14 @@
     <Header></Header>
     <div class="fixed">
       <router-link tag="b-button" class="button btnBack" to="/ideas/all">Volver</router-link>
-      <h1>Ideas Seleccionadas</h1>
+      <b-row>
+        <b-col>
+          <h1>Ideas Seleccionadas</h1>
+        </b-col>
+        <b-col align="right">
+          <h4 v-if="ideasReceived">{{ideas.length}} ideas seleccionadas</h4>
+        </b-col>
+      </b-row>
       <div class="input-group">
         <input
           type="text"
@@ -50,7 +57,14 @@
         </div>
       </b-button-group>
     </div>
-    <b-button class="next" @click="nextPage()" v-if="pagination()">Mas resultados</b-button>
+    <b v-if="filter().length == 0 && ideas != ''">No hay ideas que coincidan con la búsqueda</b>
+    <b v-if="ideas == '' && ideasReceived">No hay ideas seleccionadas</b>
+    <b-row v-else>
+      <b-col align="center">
+        <b-spinner v-if="ideas == ''" class="d-flex align-items-center" label="Loading..."></b-spinner>
+      </b-col>
+    </b-row>
+    <b-button class="next" @click="nextPage()" v-if="pagination() && filter().length > 0">Mas resultados</b-button>
     <b-modal id="showIdea" :title="idea.title" hide-footer>
       <div class="modal-container container-fluid">
         <b-img
@@ -89,7 +103,6 @@
 
 <script>
 import Header from "./Header";
-import auth from "../authentication.js";
 import api from "../requests.js";
 import Alert from "./Alert.vue"
 
@@ -109,7 +122,8 @@ export default {
       currentStage: {},
       search: "",
       page: 1,
-      size: 10
+      size: 10,
+      ideasReceived: false
     };
   },
   methods: {
@@ -121,6 +135,7 @@ export default {
         .indexPickedByChallenge(id)
         .then((response) => {
           this.ideas = response.data
+          this.ideasReceived = true
         })
         .catch((err) => {
           this.$refs.alert.network_error();
@@ -128,59 +143,37 @@ export default {
       }
     },
     pickIdea(id) {
-      this.$snotify.confirm(
-        "¿Estás seguro que quieres seleccionar esta idea?",
+      this.$refs.alert.confirm(
         "Seleccionar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Seleccionar",
-              action: () => {
-                api.idea
-                .pick(id)
-                .then((response) => {
-                  this.getPickedIdeas();
-                })
-                .catch((err) => {
-                  this.$refs.alert.network_error();
-                })
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        "¿Estás seguro que quieres seleccionar esta idea?",
+        () => {
+          api.idea
+          .pick(id)
+          .then((response) => {
+            this.getPickedIdeas();
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
       );
     },
     unpickIdea(id) {
-      this.$snotify.confirm(
+      this.$refs.alert.confirm(
+        "Deseleccionar",
         "¿Estás seguro que quieres deseleccionar esta idea?",
-        "Deseleccionar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Deseleccionar",
-              action: () => {
-                api.idea
-                .unpick(id)
-                .then((response) => {
-                  this.getPickedIdeas();
-                })
-                .catch((err) => {
-                  this.$refs.alert.network_error();
-                })
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        () => {
+          api.idea
+          .unpick(id)
+          .then((response) => {
+            this.getPickedIdeas();
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
       );
     },
     goToAllIdeas(){
@@ -202,6 +195,7 @@ export default {
         .indexPicked()
         .then((response) => {
           this.ideas = response.data;
+          this.ideasReceived = true
         })
         .catch(err => {
           this.$refs.alert.network_error();
@@ -211,29 +205,18 @@ export default {
       return this.page * this.size < this.ideas.length;
     },
     deleteIdea(idea) {
-      this.$snotify.confirm(
+      this.$refs.alert.confirm(
+        "Eliminar",
         "¿Estas seguro que quieres eliminar esta idea?",
-        "Eliminar idea",
-        {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {
-              text: "Borrar",
-              action: () => {
-                api.ideas.delete(idea.id).then(response => {
-                  this.getPickedIdeas();
-                  this.$refs.alert.success('Idea eliminada eliminada.')
-                }).catch((err) => {
-                  this.$refs.alert.network_error();
-                });
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        () => {
+          api.ideas.delete(idea.id).then(response => {
+            this.getPickedIdeas();
+            this.$refs.alert.success('Idea eliminada eliminada.')
+          }).catch((err) => {
+            this.$refs.alert.network_error();
+          });
+        },
+        function() {}
       );
     },
     filter() {
