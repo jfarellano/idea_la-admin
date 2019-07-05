@@ -78,6 +78,33 @@ export default {
       readyToRenderLoc: false,
       series: [],
       chartOptions: {
+        colors: [
+            '#53BC83'
+          , '#246F76'
+          , '#C42082'
+          , '#F94349'
+          , '#EE866C'
+          , '#565462'
+          , '#798696'
+          , '#BC8A80'
+          , '#E1B1A2'
+          , '#BE3B28'
+          , '#0EA02C'
+          , '#71B08B'
+          , '#EEA93A'
+          , '#F11D2C'
+          , '#31233D'
+          , '#6A5F75'
+          , '#D19A39'
+          , '#B68884'
+          , '#723336'
+          , '#613745'
+          , '#F65E2C'
+          , '#1C9857'
+          , '#353B3F'
+          , '#F6DE8C'
+          , '#13B2DA'
+        ],
         responsive: [{
           breakpoint: 650,
           options: {
@@ -92,6 +119,33 @@ export default {
       },
       seriesLoc: [],
       chartOptionsLoc: {
+        colors: [
+            '#53BC83'
+          , '#246F76'
+          , '#C42082'
+          , '#F94349'
+          , '#EE866C'
+          , '#565462'
+          , '#798696'
+          , '#BC8A80'
+          , '#E1B1A2'
+          , '#BE3B28'
+          , '#0EA02C'
+          , '#71B08B'
+          , '#EEA93A'
+          , '#F11D2C'
+          , '#31233D'
+          , '#6A5F75'
+          , '#D19A39'
+          , '#B68884'
+          , '#723336'
+          , '#613745'
+          , '#F65E2C'
+          , '#1C9857'
+          , '#353B3F'
+          , '#F6DE8C'
+          , '#13B2DA'
+        ],
         responsive: [{
           breakpoint: 650,
           options: {
