@@ -73,6 +73,7 @@ export default {
         {title: 'Norte – Centro Histórico', id: 3},
         {title: 'Metropolitana', id: 4},
         {title: 'Riomar', id: 5},
+        {title: 'Otro', id: 6}
       ],
       readyToRender: false,
       readyToRenderLoc: false,
@@ -208,6 +209,9 @@ export default {
         break;
         case 4:
           return 'metropolitana'
+        break;
+        case 6:
+          return 'otro'
         break;
         case 5:
           return 'riomar'
