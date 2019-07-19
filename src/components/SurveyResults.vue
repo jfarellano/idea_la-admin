@@ -55,6 +55,7 @@ export default {
         {title: 'Norte – Centro Histórico', id: 3},
         {title: 'Metropolitana', id: 4},
         {title: 'Riomar', id: 5},
+        {title: 'Otro', id: 6}
       ],
       readyToRenderLoc: false,
       locationFilter: '',
@@ -125,7 +126,6 @@ export default {
         for (var key in resultsResponse) {
           var tempResult = resultsResponse[key]
           for (var key2 in tempResult) {
-            // var parsedIndex = parseInt(key2[key2.length - 1] - 1)
             var parsedIndex = parseInt(key2)
             resultsGraph[parsedIndex].push(tempResult[key2])
             this.sumVotes = this.sumVotes + tempResult[key2]
@@ -161,6 +161,9 @@ export default {
           break;
         case 5:
           return 'riomar'
+          break;
+        case 6:
+          return 'otro'
           break;
         default:
           return 'error'
