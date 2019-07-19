@@ -5,6 +5,7 @@
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Resultados de Encuestas</h1>
       <br>
+      <b-row class="row-scroll">
       <b-col align="center" class="chart-col">
         <b-form-select
           class="mb-2 mr-sm-2 mb-sm-0 dropdown-challenges"
@@ -29,6 +30,7 @@
           <p v-if="locationFilter != ''">0 encuestas registradas en esta localidad.</p>
         </div>
       </b-col>
+      </b-row>
     </div>
     <Alert ref="alert"></Alert >
   </section>
@@ -53,6 +55,7 @@ export default {
         {title: 'Norte – Centro Histórico', id: 3},
         {title: 'Metropolitana', id: 4},
         {title: 'Riomar', id: 5},
+        {title: 'Otro', id: 6}
       ],
       readyToRenderLoc: false,
       locationFilter: '',
@@ -123,7 +126,6 @@ export default {
         for (var key in resultsResponse) {
           var tempResult = resultsResponse[key]
           for (var key2 in tempResult) {
-            // var parsedIndex = parseInt(key2[key2.length - 1] - 1)
             var parsedIndex = parseInt(key2)
             resultsGraph[parsedIndex].push(tempResult[key2])
             this.sumVotes = this.sumVotes + tempResult[key2]
@@ -159,6 +161,9 @@ export default {
           break;
         case 5:
           return 'riomar'
+          break;
+        case 6:
+          return 'otro'
           break;
         default:
           return 'error'
@@ -198,6 +203,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.row-scroll {
+  overflow:scroll;
+  height: 700px;
+}
 .chart-col {
   padding-right: 15px;
   padding-left: 15px;
@@ -210,6 +219,9 @@ export default {
   }
 }
 .fixed {
+  overflow:scroll;
+  height: 700px;
+
   position: fixed;
   z-index: 100;
   background-color: white;

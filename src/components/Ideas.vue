@@ -91,6 +91,10 @@
             {{idea.impact}}
           </p>
           <p align="justify" class="longText">
+            <b>Implementación:</b>
+            {{idea.implementation}}
+          </p>
+          <p align="justify" class="longText">
             <b>Problema:</b>
             {{idea.problem}}
           </p>
@@ -143,55 +147,39 @@ export default {
   },
   methods: {
     pickIdea(id) {
-      this.$snotify.confirm(
-        "¿Estás seguro que quieres seleccionar esta idea?",
+      this.$refs.alert.confirm(
         "Seleccionar idea",
-        {
-          closeOnClick: false,
-          buttons: [
-            {
-              text: "Seleccionar",
-              action: () => {
-                api.idea
-                .pick(id)
-                .then((response) => {
-                  if (this.ideaParam == 'all') this.getIdeas();
-                  else this.getChallengeIdeas(this.ideaParam);
-                })
-                .catch((err) => {
-                  this.$refs.alert.network_error();
-                })
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        "¿Estás seguro que quieres seleccionar esta idea?",
+        () => {
+          api.idea
+          .pick(id)
+          .then((response) => {
+            if (this.ideaParam == 'all') this.getIdeas();
+            else this.getChallengeIdeas(this.ideaParam);
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
       );
     },
     unpickIdea(id) {
-      this.$snotify.confirm(
+      this.$refs.alert.confirm(
+        "Deseleccionar",
         "¿Estás seguro que quieres deseleccionar esta idea?",
-        "Deseleccionar idea",
-        {
-          closeOnClick: false,
-          buttons: [
-            {
-              text: "Deseleccionar",
-              action: () => {
-                api.idea
-                .unpick(id)
-                .then((response) => {
-                  if (this.ideaParam == 'all') this.getIdeas();
-                  else this.getChallengeIdeas(this.ideaParam);
-                })
-                .catch((err) => {
-                  this.$refs.alert.network_error();
-                })
-              }
-            },
-            { text: "Cancelar" }
-          ]
-        }
+        () => {
+          api.idea
+          .unpick(id)
+          .then((response) => {
+            if (this.ideaParam == 'all') this.getIdeas();
+            else this.getChallengeIdeas(this.ideaParam);
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
       );
     },
     goToAllIdeas(){

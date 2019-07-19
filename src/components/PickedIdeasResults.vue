@@ -5,7 +5,7 @@
       <router-link tag="b-button" class="button btnBack" to="/dashboard">Menú</router-link>
       <h1>Resultados de Votaciones</h1>
       <br>
-      <b-row>
+      <b-row class="row-scroll">
         <b-col align="center" class="chart-col">
           <h3>Resultados por Reto</h3>
           <b-form-select
@@ -24,7 +24,7 @@
             >{{ challenge.title }}</option>
           </b-form-select>
 
-          <apexchart v-if="readyToRender" type=pie width=550 :options="chartOptions" :series="series" />
+          <apexchart class="col chart-pie" v-if="readyToRender" type=pie width=650 :options="chartOptions" :series="series" />
         </b-col>
         <b-col align="center" class="chart-col" v-if="challengeFilter != 0">
           <h3>Resultados por Localidad</h3>
@@ -46,7 +46,7 @@
           </b-form-select>
 
           <p v-if="sumVotes == 0 && locationFilter != ''">0 votos registrados.</p>
-          <apexchart v-if="readyToRenderLoc && locationFilter != '' && sumVotes > 0" type=pie width=550 :options="chartOptionsLoc" :series="seriesLoc" />
+          <apexchart class="col chart-pie" v-if="readyToRenderLoc && locationFilter != '' && sumVotes > 0" type=pie width=650 :options="chartOptionsLoc" :series="seriesLoc" />
         </b-col>
       </b-row>
     </div>
@@ -78,11 +78,38 @@ export default {
       readyToRenderLoc: false,
       series: [],
       chartOptions: {
+        colors: [
+            '#53BC83'
+          , '#246F76'
+          , '#C42082'
+          , '#F94349'
+          , '#EE866C'
+          , '#565462'
+          , '#798696'
+          , '#BC8A80'
+          , '#E1B1A2'
+          , '#BE3B28'
+          , '#0EA02C'
+          , '#71B08B'
+          , '#EEA93A'
+          , '#F11D2C'
+          , '#31233D'
+          , '#6A5F75'
+          , '#D19A39'
+          , '#B68884'
+          , '#723336'
+          , '#613745'
+          , '#F65E2C'
+          , '#1C9857'
+          , '#353B3F'
+          , '#F6DE8C'
+          , '#13B2DA'
+        ],
         responsive: [{
-          breakpoint: 480,
+          breakpoint: 650,
           options: {
             chart: {
-              width: 200
+              width: 450
             },
             legend: {
               position: 'bottom'
@@ -92,11 +119,38 @@ export default {
       },
       seriesLoc: [],
       chartOptionsLoc: {
+        colors: [
+            '#53BC83'
+          , '#246F76'
+          , '#C42082'
+          , '#F94349'
+          , '#EE866C'
+          , '#565462'
+          , '#798696'
+          , '#BC8A80'
+          , '#E1B1A2'
+          , '#BE3B28'
+          , '#0EA02C'
+          , '#71B08B'
+          , '#EEA93A'
+          , '#F11D2C'
+          , '#31233D'
+          , '#6A5F75'
+          , '#D19A39'
+          , '#B68884'
+          , '#723336'
+          , '#613745'
+          , '#F65E2C'
+          , '#1C9857'
+          , '#353B3F'
+          , '#F6DE8C'
+          , '#13B2DA'
+        ],
         responsive: [{
-          breakpoint: 480,
+          breakpoint: 650,
           options: {
             chart: {
-              width: 200
+              width: 450
             },
             legend: {
               position: 'bottom'
@@ -248,6 +302,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.row-scroll {
+  overflow:scroll;
+}
+.chart-pie {
+  margin-left: 0px;
+  @media (max-width: 400px) {
+    margin-left: -70px;
+  }
+}
+.scroll-row {
+  overflow-y: scroll;
+}
 .chart-col {
   padding-right: 15px;
   padding-left: 15px;
@@ -256,7 +322,7 @@ export default {
   margin-top: 10px;
 }
 .fixed {
-  position: fixed;
+  overflow:scroll;
   z-index: 100;
   background-color: white;
   width: 100vw !important;
