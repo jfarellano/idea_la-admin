@@ -110,7 +110,10 @@
             <b>¿Cómo se enteraron?:</b><br>
             {{idea.info_found}}
           </p>
-          
+          <p align="justify" class="longText">
+            <b>Estado de implementación:</b><br>
+            {{idea.implementation}}
+          </p>
         </div> 
       </div>
     </b-modal>
