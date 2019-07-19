@@ -91,6 +91,10 @@
             {{idea.impact}}
           </p>
           <p align="justify" class="longText">
+            <b>Implementación:</b>
+            {{idea.implementation}}
+          </p>
+          <p align="justify" class="longText">
             <b>Problema:</b>
             {{idea.problem}}
           </p>

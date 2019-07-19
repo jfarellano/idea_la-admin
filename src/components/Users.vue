@@ -80,6 +80,10 @@
           {{getGender(user.gender)}}
         </p>
         <p v-if="user.location != null">
+          <b>Barrio:</b>
+          {{upCase(user.location.name)}}
+        </p>
+        <p v-if="user.location != null">
           <b>Localidad:</b>
           {{upCase(user.location.hood)}}
         </p>
