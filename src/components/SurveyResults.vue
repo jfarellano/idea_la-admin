@@ -148,23 +148,23 @@ export default {
         case 0:
           break;
         case 1:
-          return 'suroccidente'
-          break;
+          return 'suroccidente';
         case 2:
-          return 'suroriente'
-          break;
+          return 'suroriente';
         case 3:
-          return 'norte_centro_historico'
-          break;
+          return 'norte_centro_historico';
         case 4:
-          return 'metropolitana'
-          break;
+          return 'metropolitana';
         case 5:
+<<<<<<< HEAD
           return 'riomar'
           break;
         case 6:
           return 'otro'
           break;
+=======
+          return 'riomar';
+>>>>>>> 2ad298131cfe9eb2c551ed9827424cf584c01024
         default:
           return 'error'
       } 
