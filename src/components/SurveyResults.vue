@@ -156,15 +156,11 @@ export default {
         case 4:
           return 'metropolitana';
         case 5:
-<<<<<<< HEAD
           return 'riomar'
           break;
         case 6:
           return 'otro'
           break;
-=======
-          return 'riomar';
->>>>>>> 2ad298131cfe9eb2c551ed9827424cf584c01024
         default:
           return 'error'
       } 
