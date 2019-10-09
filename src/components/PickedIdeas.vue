@@ -55,7 +55,6 @@
             <font-awesome-icon icon="check-square"></font-awesome-icon>
           </b-button>
         </div>
-
         <div v-if="currentStage.number == 4 && !currentStage.open">
           <b-button v-if="!idea.winner" class="picker-icon" @click="pickWinnerIdea(idea.id)">
             <font-awesome-icon icon="star"></font-awesome-icon>
@@ -64,12 +63,10 @@
             <font-awesome-icon icon="star"></font-awesome-icon>
           </b-button>
         </div>
-
-
       </b-button-group>
     </div>
-    <b v-if="filter().length == 0 && ideas != ''">No hay ideas que coincidan con la búsqueda</b>
-    <b v-if="ideas == '' && ideasReceived">No hay ideas seleccionadas</b>
+    <strong v-if="filter().length == 0 && ideas != ''">No hay ideas que coincidan con la búsqueda</strong>
+    <strong v-if="ideas == '' && ideasReceived">No hay ideas seleccionadas</strong>
     <b-row v-else>
       <b-col align="center">
         <b-spinner v-if="ideas == ''" class="d-flex align-items-center" label="Loading..."></b-spinner>
@@ -134,11 +131,13 @@ export default {
       search: "",
       page: 1,
       size: 10,
-      ideasReceived: false
+      ideasReceived: false,
+      idPicked: 0
     };
   },
   methods: {
     filterByChallenge(id) {
+      this.idPicked = id
       if (id == 0) {
         this.getPickedIdeas();
       } else {
@@ -161,9 +160,10 @@ export default {
           api.idea
           .pick(id)
           .then((response) => {
-            this.getPickedIdeas();
+            this.filterByChallenge(this.idPicked)
           })
           .catch((err) => {
+            console.log(err)
             this.$refs.alert.network_error();
           })
         },
@@ -178,7 +178,7 @@ export default {
           api.idea
           .unpick(id)
           .then((response) => {
-            this.getPickedIdeas();
+            this.filterByChallenge(this.idPicked)
           })
           .catch((err) => {
             this.$refs.alert.network_error();
@@ -195,10 +195,14 @@ export default {
           api.idea
           .pickWinner(id)
           .then((response) => {
-            this.getPickedIdeas();
+            this.filterByChallenge(this.idPicked)
           })
           .catch((err) => {
-            this.$refs.alert.network_error();
+            if (err.response == null) {
+              this.$refs.alert.network_error();
+            } else {
+              this.$refs.alert.picked_winner_in_limit()
+            }
           })
         },
         function() {}
@@ -212,7 +216,7 @@ export default {
           api.idea
           .unpickWinner(id)
           .then((response) => {
-            this.getPickedIdeas();
+            this.filterByChallenge(this.idPicked)
           })
           .catch((err) => {
             this.$refs.alert.network_error();

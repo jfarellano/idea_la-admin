@@ -50,7 +50,10 @@ export default {
     },
     blocked_user: function() {
       this.$snotify.error('Tu usuario ha sido bloqueado', 'Usuario bloqueado', this.params)
-    }
+    },
+    picked_winner_in_limit: function() {
+      this.$snotify.error('Ya existe una idea ganadora para este reto', 'Idea ganadora', this.params)
+    },
   }
 };
 </script>
