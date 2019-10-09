@@ -13,13 +13,14 @@ import Snotify from 'vue-snotify';
 import 'vue-snotify/styles/simple.css';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueApexCharts from 'vue-apexcharts'
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('apexchart', VueApexCharts)
 
-library.add(fas)
+library.add(fas, far)
 
 Vue.use(VueApexCharts)
 Vue.use(Snotify, {

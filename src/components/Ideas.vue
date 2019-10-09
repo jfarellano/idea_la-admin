@@ -157,7 +157,7 @@ export default {
             if (this.ideaParam == 'all') this.getIdeas();
             else this.getChallengeIdeas(this.ideaParam);
           })
-          .catch((err) => {
+          .catch(() => {
             this.$refs.alert.network_error();
           })
         },
@@ -175,7 +175,7 @@ export default {
             if (this.ideaParam == 'all') this.getIdeas();
             else this.getChallengeIdeas(this.ideaParam);
           })
-          .catch((err) => {
+          .catch(() => {
             this.$refs.alert.network_error();
           })
         },
@@ -203,7 +203,7 @@ export default {
           this.ideas = response.data;
           this.ideasReceived = true
         })
-        .catch(err => {
+        .catch(() => {
           this.$refs.alert.network_error();
         });
     },
@@ -219,7 +219,7 @@ export default {
             if (this.ideaParam == 'all') this.getIdeas();
             else this.getChallengeIdeas(this.ideaParam);
             this.$refs.alert.success('Idea eliminada eliminada.')
-          }).catch((err) => {
+          }).catch(() => {
             this.$refs.alert.network_error();
           });
         },
@@ -256,7 +256,7 @@ export default {
       .then(response => {
         this.ideas = response.data;
       })
-      .catch(err => {
+      .catch(() => {
         this.$refs.alert.network_error();
       });
     },
@@ -267,7 +267,7 @@ export default {
         this.currentStage = response.data
         if (this.currentStage.number == 0) this.$router.push('/dashboard')
       })
-      .catch((err) => {
+      .catch(() => {
         this.$refs.alert.network_error();
       })
     }

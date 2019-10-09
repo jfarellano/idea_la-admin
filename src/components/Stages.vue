@@ -11,7 +11,7 @@
         </b-row>
         <b-row>
           <b-col align="center">
-            <div v-if="currentStage.number != 4">
+            <div v-if="currentStage.number != 4 || !currentStage.open">
               <button
                 type="button"
                 class="btn btn-primary btn-lg btnStyle"
@@ -86,7 +86,7 @@ export default {
           return 'Sólo se muestran las ideas preseleccionadas (5 por cada reto), los usuarios podrán votar por una sola idea dentro de cada reto y comentar las ideas las veces que quieran. Se pueden registrar usuarios. No se pueden publicar mas ideas. No se pueden editar ideas. No se pueden agregar mas retos.'
           break;
         case 4:
-          return 'Se cierran la votaciones y solo se muestran las ideas ganadoras por cada reto. Los usuarios pueden seguir comentando las ideas ganadoras. Se pueden registrar usuarios. No se puede votar por ideas. No se pueden agregar mas ideas. No se pueden editar ideas. No se puede agregar mas retos.'
+          return 'TIENE ETAPA 4 ABIERTA Y CERRADA. Se cierran la votaciones y solo se muestran las ideas ganadoras por cada reto. Los usuarios pueden seguir comentando las ideas ganadoras. Se pueden registrar usuarios. No se puede votar por ideas. No se pueden agregar mas ideas. No se pueden editar ideas. No se puede agregar mas retos.'
           break;
         default:
           return 'Ha ocurrido un error'

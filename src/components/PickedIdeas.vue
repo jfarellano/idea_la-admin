@@ -55,6 +55,17 @@
             <font-awesome-icon icon="check-square"></font-awesome-icon>
           </b-button>
         </div>
+
+        <div v-if="currentStage.number == 4 && !currentStage.open">
+          <b-button v-if="!idea.winner" class="picker-icon" @click="pickWinnerIdea(idea.id)">
+            <font-awesome-icon icon="star"></font-awesome-icon>
+          </b-button>
+          <b-button v-else class="winner picker-icon" @click="unpickWinnerIdea(idea.id)">
+            <font-awesome-icon icon="star"></font-awesome-icon>
+          </b-button>
+        </div>
+
+
       </b-button-group>
     </div>
     <b v-if="filter().length == 0 && ideas != ''">No hay ideas que coincidan con la búsqueda</b>
@@ -166,6 +177,40 @@ export default {
         () => {
           api.idea
           .unpick(id)
+          .then((response) => {
+            this.getPickedIdeas();
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
+      );
+    },
+    pickWinnerIdea(id) {
+      this.$refs.alert.confirm(
+        "Seleccionar idea",
+        "¿Estás seguro que quieres seleccionar esta idea?",
+        () => {
+          api.idea
+          .pickWinner(id)
+          .then((response) => {
+            this.getPickedIdeas();
+          })
+          .catch((err) => {
+            this.$refs.alert.network_error();
+          })
+        },
+        function() {}
+      );
+    },
+    unpickWinnerIdea(id) {
+      this.$refs.alert.confirm(
+        "Deseleccionar",
+        "¿Estás seguro que quieres deseleccionar esta idea?",
+        () => {
+          api.idea
+          .unpickWinner(id)
           .then((response) => {
             this.getPickedIdeas();
           })
@@ -352,6 +397,9 @@ export default {
     }
     .pick {
       background-color: #0B6623;
+    }
+    .winner {
+      background-color: #FFCC00;
     }
     .avatar {
       width: 34px;
