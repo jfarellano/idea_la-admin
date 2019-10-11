@@ -27,8 +27,8 @@
       </b-col>
       <b-modal id="showNextStage" title="Siguiente Etapa" hide-footer>
         <div class="modal-container container-fluid">
-          <h3>Etapa {{((currentStage.number + 1) % 6)}}</h3>
-          <p>{{nextStageDescription((currentStage.number + 1) % 6)}}</p>
+          <h3>Etapa {{((currentStage.number + 1) % 5)}}</h3>
+          <p>{{nextStageDescription((currentStage.number + 1) % 5)}}</p>
           <br>
           <b>ATENCIÓN:</b><br>
           <b>Los cambios son irreversibles luego de pasar a la siguiente etapa.</b><br>
@@ -86,10 +86,7 @@ export default {
           return 'Sólo se muestran las ideas preseleccionadas (5 por cada reto), los usuarios podrán votar por una sola idea dentro de cada reto y comentar las ideas las veces que quieran. Se pueden registrar usuarios. No se pueden publicar mas ideas. No se pueden editar ideas. No se pueden agregar mas retos.'
           break;
         case 4:
-          return 'Se cierran la votaciones y solo se muestran las ideas seleccionadas para votación. Dentro del panel admin aparecen las nuevas opciones dentro de selección de ideas para seleccionar las ideas ganadores.'
-          break;
-        case 5:
-          return 'Sólo se muestran las ideas ganadoras por cada reto. Los usuarios pueden seguir comentando las ideas ganadoras. Se pueden registrar usuarios. No se puede votar por ideas. No se pueden agregar mas ideas. No se pueden editar ideas. No se puede agregar mas retos.'
+          return 'ABIERTA: Se cierran la votaciones y solo se muestran las ideas seleccionadas para votación. Dentro del panel admin aparecen las nuevas opciones dentro de selección de ideas para seleccionar las ideas ganadores. CERRADA: Sólo se muestran las ideas ganadoras por cada reto. Los usuarios pueden seguir comentando las ideas ganadoras. Se pueden registrar usuarios. No se puede votar por ideas. No se pueden agregar mas ideas. No se pueden editar ideas. No se puede agregar mas retos.'
           break;
         default:
           return 'Ha ocurrido un error'

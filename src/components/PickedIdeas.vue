@@ -55,7 +55,7 @@
             <font-awesome-icon icon="check-square"></font-awesome-icon>
           </b-button>
         </div>
-        <div v-if="currentStage.number == 4 && !currentStage.open">
+        <div v-if="currentStage.number == 4 && currentStage.open">
           <b-button v-if="!idea.winner" class="picker-icon" @click="pickWinnerIdea(idea.id)">
             <font-awesome-icon icon="star"></font-awesome-icon>
           </b-button>
